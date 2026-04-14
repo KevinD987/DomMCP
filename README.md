@@ -17,15 +17,15 @@
 - Professional and Enterprise capabilities require a valid signed license and remain blocked otherwise.
 
 ## Release artifacts
-- Versioned artifacts are published under `release/public/<version>/`.
+- Versioned artifacts are published under `<version>/` in this repository.
 - Current package files:
-  - `release/public/v0.0.81/linux-x86_64/dommcp_addin`
-  - `release/public/v0.0.81/linux-x86_64/SHA256SUMS`
-  - `release/public/v0.0.81/RELEASE.md`
-  - `release/public/CONFIG_EXAMPLE.json`
-  - `release/public/OPERATE.md`
-  - `release/public/QUICKSTART.md`
-  - `release/public/TOOLS.md`
+  - `v0.0.81/linux-x86_64/dommcp_addin`
+  - `v0.0.81/linux-x86_64/SHA256SUMS`
+  - `v0.0.81/RELEASE.md`
+  - `CONFIG_EXAMPLE.json`
+  - `OPERATE.md`
+  - `QUICKSTART.md`
+  - `TOOLS.md`
 
 ## Minimal installation
 - Copy binary and set executable bit.
@@ -34,7 +34,7 @@
 - Validate MCP endpoint.
 
 ```bash
-cp dommcp_addin /opt/hcl/domino/notes/latest/linux/dommcp_addin
+cp v0.0.81/linux-x86_64/dommcp_addin /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chmod +x /opt/hcl/domino/notes/latest/linux/dommcp_addin
 domino cmd "tell dommcp quit"
 domino cmd "load dommcp_addin /local/notesdata/<config>.json"
