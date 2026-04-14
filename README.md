@@ -26,6 +26,7 @@
   - `OPERATE.md`
   - `QUICKSTART.md`
   - `TOOLS.md`
+  - `examples/n8n/Workflow_Domino_Mattermost.example.json`
 
 ## Minimal installation
 - Copy binary and set executable bit.
