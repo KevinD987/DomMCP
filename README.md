@@ -28,6 +28,11 @@
   - `TOOLS.md`
   - `examples/n8n/Workflow_Domino_Mattermost.example.json`
 
+## n8n example workflow
+- Example file: `examples/n8n/Workflow_Domino_Mattermost.example.json`
+- Purpose: webhook-driven Mattermost chat flow that calls DomMCP via MCP client node and posts the response back to Mattermost.
+- Setup details: `examples/n8n/README.md`
+
 ## Minimal installation
 - Copy binary and set executable bit.
 - Provide runtime JSON config.
