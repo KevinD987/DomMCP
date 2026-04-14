@@ -1,0 +1,85 @@
+{
+  "server": {
+    "name": "DomMCP",
+    "server_active": true,
+    "config_database": "",
+    "audit_database": "dommcpaudit.nsf",
+    "listen_host": "0.0.0.0",
+    "listen_port": 8088,
+    "reload_interval_seconds": 60,
+    "request_timeout_ms": 15000,
+    "max_response_bytes": 65536,
+    "default_page_size": 25,
+    "max_page_size": 100,
+    "allow_hidden_views": false,
+    "cors_origin": "",
+    "log_level": "info",
+    "default_masking_mode": "exclude",
+    "default_response_profile": "lean",
+    "license_file_path": "",
+    "license_public_key": "-----BEGIN PUBLIC KEY-----\n<YOUR_PUBLIC_KEY>\n-----END PUBLIC KEY-----\n",
+    "license_domain": "acme",
+    "license_validation_ttl_seconds": 60
+  },
+  "audit": {
+    "level": "standard",
+    "retention_days": 30,
+    "sensitive_fields": [
+      "SSN",
+      "Password"
+    ],
+    "masked_fields": [
+      "SSN"
+    ]
+  },
+  "license": {
+    "license_code": "",
+    "status": "inactive",
+    "issued_to_domain": "acme",
+    "valid_until": "",
+    "edition": "starter",
+    "features": []
+  },
+  "tokens": [
+    {
+      "token_id": "admin-token",
+      "display_name": "Admin Token",
+      "token_hash": "<SHA256_OF_BEARER_TOKEN>",
+      "status": "active",
+      "description": "Primary API token",
+      "owner": "Admin",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_until": "2030-12-31T23:59:59Z",
+      "grant_ids": [
+        "main"
+      ],
+      "allowed_client_ids": [],
+      "allowed_source_ips": [
+        "0.0.0.0/0"
+      ],
+      "rate_limit_per_minute": 120,
+      "max_parallel_requests": 4,
+      "last_used_at": ""
+    }
+  ],
+  "grants": [
+    {
+      "grant_id": "main",
+      "server": "",
+      "path": "names.nsf",
+      "allow_all_databases": false,
+      "allowed_tools": [
+        "*"
+      ],
+      "allowed_fields": [],
+      "excluded_fields": [],
+      "field_masking_mode": "exclude",
+      "max_results": 300,
+      "max_response_bytes": 524288,
+      "view_access_allowed": true,
+      "allowed_views": []
+    }
+  ],
+  "profiles": [],
+  "remote_mcp_servers": []
+}
