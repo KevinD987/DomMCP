@@ -2,7 +2,7 @@
 
 ## Edition visibility
 
-### Starter (default baseline)
+### Starter
 - `list_allowed_databases`
 - `get_database_info`
 - `profile_database`
@@ -94,7 +94,3 @@ Includes Starter plus:
 - `proxy_list_servers`
 - `proxy_list_tools`
 - `proxy_call_tool`
-
-## Notes
-- Final tool visibility depends on edition, license entitlements, token, and grant.
-- Professional/Enterprise-only calls from Starter baseline are blocked with license/tool authorization errors.

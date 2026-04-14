@@ -11,7 +11,7 @@
 - **Enterprise** (**licensed**): Professional superset with enterprise entitlement profile and rollout policy.
 
 ## License model / default runtime behavior
-- Without a valid license code, DomMCP runs in Starter baseline mode.
+- Without a valid license code, DomMCP runs in Starter mode.
 - Technical runtime status for that mode is `starter_default_unlicensed`.
 - In that mode, Starter toolset and Starter caps are enforced permanently.
 - Professional and Enterprise capabilities require a valid signed license and remain blocked otherwise.
