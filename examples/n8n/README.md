@@ -20,7 +20,3 @@ Before import/use:
   - Mattermost API
   - MCP bearer token
   - LLM provider credentials
-
-Security note:
-- This example is sanitized for public release.
-- Do not commit real webhook IDs, channel IDs, bearer tokens, or credential IDs.
