@@ -77,3 +77,4 @@ domino cmd "load dommcp_addin /local/notesdata/<config>.json"
 ## Contact
 - Website: `it-dallmann.de`
 - More information: [https://it-dallmann.de/domino-mcp/](https://it-dallmann.de/domino-mcp/)
+- Please test the release in your environment and feel free to open GitHub issues for bugs, questions, or improvement ideas.
