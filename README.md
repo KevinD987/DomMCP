@@ -73,3 +73,7 @@ domino cmd "load dommcp_addin /local/notesdata/<config>.json"
 - Domain binding in runtime config must match signed license claims.
 - MCP listen host/port must be reachable from clients.
 - Public toolset is read-only by design.
+
+## Contact
+- Website: `it-dallmann.de`
+- More information: [https://it-dallmann.de/domino-mcp/](https://it-dallmann.de/domino-mcp/)
