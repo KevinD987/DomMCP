@@ -19,7 +19,7 @@
 ## Release artifacts
 - Versioned artifacts are published under `<version>/` in this repository.
 - Current package files:
-  - `v0.0.81/linux-x86_64/dommcp_addin`
+  - `v0.0.81/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.38`
   - `v0.0.81/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`
   - `v0.0.81/linux-x86_64/SHA256SUMS`
   - `v0.0.81/RELEASE.md`
@@ -41,7 +41,7 @@
 - Validate MCP endpoint.
 
 ```bash
-cp v0.0.81/linux-x86_64/dommcp_addin /opt/hcl/domino/notes/latest/linux/dommcp_addin
+cp v0.0.81/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.38 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chmod +x /opt/hcl/domino/notes/latest/linux/dommcp_addin
 domino cmd "tell dommcp quit"
 domino cmd "load dommcp_addin /local/notesdata/<config>.json"
