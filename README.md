@@ -68,6 +68,7 @@ domino cmd "load dommcp_addin /local/notesdata/<config>.json"
 - Linux x86_64 (`ELF 64-bit` add-in binary).
 - Built against Domino C API on Linux.
 - **Requires HCL Domino 14.5** (runtime and API compatibility target for this release line).
+- **glibc requirement:** use the binary matching your target host (`glibc 2.34` or `glibc 2.38`).
 
 ## Known prerequisites / constraints
 - Domino server runtime must match released binary requirements.
