@@ -2,6 +2,7 @@
 
 ## Artifacts
 - `linux-x86_64/dommcp_addin`
+- `linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`
 - `linux-x86_64/SHA256SUMS`
 
 ## Version marker
@@ -20,6 +21,7 @@ Expected checksum:
 
 ```text
 1e44b81d44e0fa94e516b18020b74bf8025ca46a0763a5c8c964a235930b7e4e  dommcp_addin
+71216cd3e21de0cc3f6ea7edc25afb6f5ea3f4f6aa5da3f16e15ef74dfc759a1  dommcp_addin-linux-x86_64-glibc2.34
 ```
 
 ## Install (minimal)

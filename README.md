@@ -20,6 +20,7 @@
 - Versioned artifacts are published under `<version>/` in this repository.
 - Current package files:
   - `v0.0.81/linux-x86_64/dommcp_addin`
+  - `v0.0.81/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`
   - `v0.0.81/linux-x86_64/SHA256SUMS`
   - `v0.0.81/RELEASE.md`
   - `CONFIG_EXAMPLE.json`
