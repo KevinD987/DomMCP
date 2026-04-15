@@ -39,6 +39,8 @@ domino cmd "load dommcp_addin /local/notesdata/dommcp-default-config.json"
 - Linux x86_64
 - **HCL Domino 14.5 required**
 - **glibc requirement:** choose the matching artifact (`dommcp_addin-linux-x86_64-glibc2.34` or `dommcp_addin-linux-x86_64-glibc2.38`)
+- Detect host glibc:
+  - `ldd --version | head -n 1`
 
 ## License behavior
 - Starter: curated baseline runtime; without license the server runs in `starter_default_unlicensed`.

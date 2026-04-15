@@ -69,6 +69,8 @@ domino cmd "load dommcp_addin /local/notesdata/<config>.json"
 - Built against Domino C API on Linux.
 - **Requires HCL Domino 14.5** (runtime and API compatibility target for this release line).
 - **glibc requirement:** use the binary matching your target host (`glibc 2.34` or `glibc 2.38`).
+- Detect host glibc before choosing the artifact:
+  - `ldd --version | head -n 1`
 
 ## Known prerequisites / constraints
 - Domino server runtime must match released binary requirements.
