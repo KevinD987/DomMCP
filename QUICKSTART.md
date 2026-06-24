@@ -13,7 +13,8 @@ release version.
 ### Linux
 
 ```bash
-# Pick the artifact matching your host glibc (detect: ldd --version | head -n 1)
+# Use the provided Linux build (glibc2.34). Check your host glibc with: ldd --version | head -n 1
+# (if your target Domino needs a different glibc floor, request a matching build)
 cp dommcp_addin-linux-x64-glibc2.34 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin
@@ -26,7 +27,7 @@ shasum -a 256 -c SHA256SUMS
 ```powershell
 # Copy the EXE into the Domino program directory (where nserver.exe lives), e.g.:
 Copy-Item dommcp_addin-windows-x64.exe "C:\Program Files\HCL\Domino\dommcp_addin.exe"
-# Verify integrity (compare against SHA256SUMS-windows.txt):
+# Verify integrity (compare against the entry in SHA256SUMS):
 Get-FileHash "C:\Program Files\HCL\Domino\dommcp_addin.exe" -Algorithm SHA256
 ```
 

@@ -79,7 +79,7 @@ DomMCP ships for **Linux** and **Windows**, plus an **HCL domino-container Custo
 
 | Artifact | Use |
 |---|---|
-| `dommcp_addin-linux-x64-glibc<ver>` | Linux Domino add-in binary (pick the build matching your host glibc). |
+| `dommcp_addin-linux-x64-glibc<ver>` | Linux Domino add-in binary (currently glibc2.34; request another floor if your Domino host needs it). |
 | `dommcp_addin-windows-x64.exe` | Windows Domino add-in binary. |
 | `dommcp-<ver>.taz` | HCL domino-container Custom Add-on (`-custom-addon=<file>.taz#<sha256>`). |
 | `SHA256SUMS` | Integrity checksums. |

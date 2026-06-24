@@ -124,6 +124,5 @@
       "max_response_bytes": 524288
     }
   ],
-  "profiles": [],
-  "remote_mcp_servers": []
+  "profiles": []
 }

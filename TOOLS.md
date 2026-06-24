@@ -65,7 +65,6 @@ its grant and the active license edition. This catalog groups the tools by categ
 - `delete_database` — delete a database.
 - `db_compact` — compact a database.
 - `db_get_quota` 🔍 — read quota/size limits.
-- `db_set_quota` — set quota/size limits.
 
 ## ACL & security
 
@@ -84,6 +83,7 @@ its grant and the active license edition. This catalog groups the tools by categ
 - `server_console_command` ✏️ — run a scoped Domino console command.
 - `get_server_health` 🔍 — server health.
 - `get_server_stats` 🔍 — server statistics.
+- `get_license_status` 🔍 — current license edition, status, expiry, and runtime mode.
 - `self_test` 🔍 — internal self-test.
 - `list_server_processes` 🔍 — running server processes.
 - `list_active_users` 🔍 — active users/sessions.
@@ -102,3 +102,6 @@ its grant and the active license edition. This catalog groups the tools by categ
 
 Beyond the edition, a token only ever sees the tools its **grant** allows (`allowed_tools`), scoped to the
 databases, views, and fields the grant permits.
+
+> The edition names are the licensing tiers. Actual capability is enforced by the **entitlements carried in
+> the signed license** plus the **grant** — not by the edition label alone.

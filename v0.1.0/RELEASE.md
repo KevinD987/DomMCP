@@ -4,8 +4,8 @@ This is a major step beyond the v0.0.81 read-only line: DomMCP is now a full **r
 admin** MCP server for HCL Domino, on **Linux and Windows** and as an **HCL domino-container add-on**, with
 **Claude** and **ChatGPT** connector support.
 
-> Pre-release builds for this line are tagged `v0.1.0-rcN`. v0.0.81 remains the current "Latest" until v0.1.0
-> is finalized.
+> Pre-release builds for this line are tagged `v0.1.0-rcN`. v0.0.81 is the previous read-only line; v0.1.0
+> ships as a pre-release until it is finalized.
 
 ## Highlights vs v0.0.81
 
@@ -25,7 +25,7 @@ admin** MCP server for HCL Domino, on **Linux and Windows** and as an **HCL domi
 - **Windows** add-in binary (`dommcp_addin-windows-x64.exe`) — same MCP surface as Linux.
 - **HCL domino-container Custom Add-on** (`dommcp-<ver>.taz`) — register at image build with
   `-custom-addon=<file>.taz#<sha256>`; installs the binary + clean token-less seed.
-- **Linux** binaries are glibc-tagged so you can match your Domino host.
+- **Linux** binaries are glibc-tagged so you can match your Domino host (this build: glibc2.34).
 
 ### More clients
 - **Anthropic Claude** custom connector over **OAuth 2.1 + Streamable HTTP**.
@@ -49,7 +49,7 @@ admin** MCP server for HCL Domino, on **Linux and Windows** and as an **HCL domi
 | `dommcp_addin-linux-x64-glibc<ver>` | Linux Domino add-in (match host glibc). |
 | `dommcp_addin-windows-x64.exe` | Windows Domino add-in. |
 | `dommcp-<ver>.taz` | HCL domino-container Custom Add-on. |
-| `SHA256SUMS` / `SHA256SUMS-windows.txt` | Integrity checksums. |
+| `SHA256SUMS` | Integrity checksums (covers the Linux, Windows, and `.taz` artifacts). |
 
 ## Integrity
 
