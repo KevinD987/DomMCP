@@ -1,8 +1,9 @@
 {
+  "_comment": "DomMCP config TEMPLATE — placeholders only. On a live server the NSF (dommcp/dommcpcfg.nsf) is the source of truth; this JSON is only used to SEED a fresh install. Mint the first admin with `tell dommcp provision-admin <secret>` instead of hand-writing token hashes. Never commit real tokens, license codes, domains, or keys.",
   "server": {
     "name": "DomMCP",
     "server_active": true,
-    "config_database": "",
+    "config_database": "dommcpcfg.nsf",
     "audit_database": "dommcpaudit.nsf",
     "listen_host": "0.0.0.0",
     "listen_port": 8088,
@@ -17,41 +18,41 @@
     "default_masking_mode": "exclude",
     "default_response_profile": "lean",
     "license_file_path": "",
-    "license_public_key": "-----BEGIN PUBLIC KEY-----\n<YOUR_PUBLIC_KEY>\n-----END PUBLIC KEY-----\n",
-    "license_domain": "acme",
+    "license_domain": "<YOUR_DOMAIN>",
     "license_validation_ttl_seconds": 60
   },
   "audit": {
     "level": "standard",
     "retention_days": 30,
     "sensitive_fields": [
-      "SSN",
-      "Password"
+      "<SENSITIVE_FIELD>"
     ],
     "masked_fields": [
-      "SSN"
+      "<MASKED_FIELD>"
     ]
   },
   "license": {
+    "_comment": "Leave empty to seed unlicensed (7-day read-only eval). Activate via dommcp-license.json on the server, not by editing this file. The verifying public key is compiled into the binary; any key here is ignored.",
     "license_code": "",
-    "status": "inactive",
-    "issued_to_domain": "acme",
+    "status": "unlicensed",
+    "issued_to_domain": "<YOUR_DOMAIN>",
     "valid_until": "",
-    "edition": "starter",
+    "edition": "",
     "features": []
   },
   "tokens": [
     {
+      "_comment": "Token-less seed is recommended (use provision-admin). This entry shows the shape if you do seed a token. token_hash = sha256 of the Bearer secret; write-intent token = secret + '-write'.",
       "token_id": "admin-token",
       "display_name": "Admin Token",
-      "token_hash": "<SHA256_OF_BEARER_TOKEN>",
+      "token_hash": "<SHA256_OF_BEARER_SECRET>",
       "status": "active",
       "description": "Primary API token",
-      "owner": "Admin",
+      "owner": "<OWNER>",
       "valid_from": "2026-01-01T00:00:00Z",
       "valid_until": "2030-12-31T23:59:59Z",
       "grant_ids": [
-        "main"
+        "super-admin"
       ],
       "allowed_client_ids": [],
       "allowed_source_ips": [
@@ -64,20 +65,63 @@
   ],
   "grants": [
     {
-      "grant_id": "main",
+      "_comment": "Grant = what a token may do. Tighten allow_all_databases / allowed_tools / fields for least privilege.",
+      "grant_id": "super-admin",
       "server": "",
-      "path": "names.nsf",
-      "allow_all_databases": false,
+      "path": "",
+      "title": "Super Admin - All Databases",
+      "status": "active",
+      "allow_all_databases": true,
+      "allow_system_database": true,
+      "design_write_allowed": true,
+      "acl_write_allowed": true,
+      "database_create_allowed": true,
+      "document_write_allowed": true,
       "allowed_tools": [
         "*"
       ],
+      "allowed_views": [],
+      "allowed_forms": [],
       "allowed_fields": [],
       "excluded_fields": [],
-      "field_masking_mode": "exclude",
-      "max_results": 300,
-      "max_response_bytes": 524288,
+      "masked_fields": [],
+      "full_text_allowed": true,
+      "formula_search_allowed": true,
       "view_access_allowed": true,
-      "allowed_views": []
+      "document_direct_access_allowed": true,
+      "summary_only": false,
+      "max_results": 20000,
+      "max_field_bytes": 1048576,
+      "max_response_bytes": 10485760
+    },
+    {
+      "_comment": "Example of a least-privilege READ grant scoped to one database and explicit tools.",
+      "grant_id": "readonly-app",
+      "server": "",
+      "path": "app.nsf",
+      "title": "Read-only access to app.nsf",
+      "status": "active",
+      "allow_all_databases": false,
+      "design_write_allowed": false,
+      "acl_write_allowed": false,
+      "database_create_allowed": false,
+      "document_write_allowed": false,
+      "allowed_tools": [
+        "list_views",
+        "read_view_entries",
+        "get_document",
+        "search_documents",
+        "query_documents_dql"
+      ],
+      "allowed_views": [],
+      "allowed_fields": [],
+      "excluded_fields": [
+        "<SECRET_FIELD>"
+      ],
+      "field_masking_mode": "exclude",
+      "view_access_allowed": true,
+      "max_results": 300,
+      "max_response_bytes": 524288
     }
   ],
   "profiles": [],

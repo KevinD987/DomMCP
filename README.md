@@ -1,84 +1,107 @@
-# DomMCP Public Binary (Starter / Professional / Enterprise)
+# DomMCP — HCL Domino as an MCP server
 
-## What is DomMCP
-- DomMCP is a read-only MCP server add-in for HCL Domino.
-- It provides MCP tools for Domino retrieval, inspection, and operations used by agents and workflow systems.
-- This publication is a **closed-source binary distribution**.
+DomMCP is an **HCL Domino server add-in** that exposes Domino NSF databases as a
+[Model Context Protocol](https://modelcontextprotocol.io) (MCP) server over HTTP. It lets AI agents and
+automation platforms **read, write, and build** Domino applications — documents *and* design elements
+(forms, views, agents, pages, script libraries, ACL) — through a single governed endpoint.
 
-## Public editions
-- **Starter**: curated core read-only toolset with tighter runtime limits.
-- **Professional** (**licensed**): extended read/analysis toolset (query + aggregation + broader capabilities).
-- **Enterprise** (**licensed**): Professional superset with enterprise entitlement profile and rollout policy.
+This repository is a **closed-source binary distribution**. Source code is not published here.
 
-## License model / default runtime behavior
-- Without a valid license code, DomMCP runs in Starter mode.
-- Technical runtime status for that mode is `starter_default_unlicensed`.
-- In that mode, Starter toolset and Starter caps are enforced permanently.
-- Professional and Enterprise capabilities require a valid signed license and remain blocked otherwise.
+> **Not read-only.** Earlier public builds were retrieval-only. Current DomMCP performs full read **and**
+> write **and** design authoring **and** server administration, gated by a per-token permission model.
 
-## Release artifacts
-- Versioned artifacts are published under `<version>/` in this repository.
-- Current package files:
-  - `v0.0.81/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.38`
-  - `v0.0.81/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`
-  - `v0.0.81/linux-x86_64/SHA256SUMS`
-  - `v0.0.81/RELEASE.md`
-  - `CONFIG_EXAMPLE.json`
-  - `OPERATE.md`
-  - `QUICKSTART.md`
-  - `TOOLS.md`
-  - `examples/n8n/Workflow_Domino_Mattermost.example.json`
+## What it does
 
-## n8n example workflow
-- Example file: `examples/n8n/Workflow_Domino_Mattermost.example.json`
-- Purpose: webhook-driven Mattermost chat flow that calls DomMCP via MCP client node and posts the response back to Mattermost.
-- Setup details: `examples/n8n/README.md`
+- **Read / query:** discover databases, profile schema, read views, fetch documents, full-text search,
+  **DQL** queries, and aggregations.
+- **Write:** create / update / delete documents (typed fields, rich text, names/authors/readers).
+- **Design authoring:** create and patch forms, subforms, views, folders, pages, outlines, framesets,
+  navigators, agents (formula + LotusScript), script libraries, database scripts, shared fields, and
+  image/file/stylesheet resources — driven entirely by DXL/parameters from the AI side.
+- **Administration:** ACL and roles, group and person management, database lifecycle (create / compact /
+  quota / delete), and scoped server-console commands.
 
-## Minimal installation
-- Copy binary and set executable bit.
-- Provide runtime JSON config.
-- Restart add-in with target config.
-- Validate MCP endpoint.
+## How it works
 
-```bash
-cp v0.0.81/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.38 /opt/hcl/domino/notes/latest/linux/dommcp_addin
-chmod +x /opt/hcl/domino/notes/latest/linux/dommcp_addin
-domino cmd "tell dommcp quit"
-domino cmd "load dommcp_addin /local/notesdata/<config>.json"
+```
+AI agent / automation  ──HTTP POST /mcp (JSON-RPC 2.0)──▶  DomMCP add-in  ──Notes C API──▶  Domino NSF
+                          Bearer token                       (load dommcp_addin, :8088)
 ```
 
-```bash
-curl -sS -X POST http://<host>:8088/mcp \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <token>' \
-  --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
-```
+The add-in runs as a Domino server task (`load dommcp_addin`) and listens on port **8088**, serving
+JSON-RPC 2.0 over `POST /mcp`. Configuration lives in an NSF on the server (**NSF = source of truth**);
+a JSON config file is used only to seed a fresh install.
 
-## License activation
-- Insert signed license code into config key `license.license_code`.
-- Restart add-in.
-- Validate runtime/licensing tools.
+## Clients
 
-```bash
-domino cmd "tell dommcp quit"
-domino cmd "load dommcp_addin /local/notesdata/<config>.json"
-```
+DomMCP speaks standard MCP and works with:
 
-## Supported platform
-- Linux x86_64 (`ELF 64-bit` add-in binary).
-- Built against Domino C API on Linux.
-- **Requires HCL Domino 14.5** (runtime and API compatibility target for this release line).
-- **glibc requirement:** use the binary matching your target host (`glibc 2.34` or `glibc 2.38`).
-- Detect host glibc before choosing the artifact:
-  - `ldd --version | head -n 1`
+- **Anthropic Claude** — via the OAuth 2.1 / Streamable-HTTP **custom connector** (claude.ai).
+- **OpenAI / ChatGPT** — MCP-compatible connector.
+- **n8n / scripts / any Bearer client** — plain `Authorization: Bearer <token>` against `POST /mcp`.
 
-## Known prerequisites / constraints
-- Domino server runtime must match released binary requirements.
-- Domain binding in runtime config must match signed license claims.
-- MCP listen host/port must be reachable from clients.
-- Public toolset is read-only by design.
+See [`QUICKSTART.md`](QUICKSTART.md) for connecting each client and
+[`examples/`](examples/) for a worked n8n workflow.
+
+## Security model
+
+- **Token → Grant → scope.** Each Bearer token resolves (SHA-256) to one or more *grants*; a grant decides
+  which databases, tools, views, and fields the token may touch, plus rate/size limits.
+- **Write-intent.** Every write additionally requires a `write_intent_token` (the token secret + `-write`),
+  so read tokens cannot mutate even if a write tool is invoked.
+- **Run-as ACL.** A token can be mapped to a Domino user so reads are additionally enforced by the database
+  ACL (a no-access user sees nothing).
+- **Audit.** Every request is recorded to an audit NSF.
+
+## License & editions
+
+DomMCP uses an **offline Ed25519** license — no phone-home. The verifying public key is **compiled into the
+binary**, so a license must be signed by the genuine key (a swapped public key cannot self-sign).
+
+| Edition | Capability |
+|---|---|
+| **READ** | Read / query / aggregation tools. |
+| **PRO** | READ plus write + design authoring. |
+| **ENTERPRISE** | Full toolset incl. administration, higher limits. |
+| **TRIAL** | Time-boxed evaluation. |
+
+Runtime behavior without a valid license:
+
+- **Unlicensed:** a **7-day read-only evaluation** window, after which the server is **blocked** until a
+  license is installed.
+- **Expired license:** the server degrades to **permanent read-only**.
+
+License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
+
+## Platforms & artifacts
+
+DomMCP ships for **Linux** and **Windows**, plus an **HCL domino-container Custom Add-on** tarball.
+
+| Artifact | Use |
+|---|---|
+| `dommcp_addin-linux-x64-glibc<ver>` | Linux Domino add-in binary (pick the build matching your host glibc). |
+| `dommcp_addin-windows-x64.exe` | Windows Domino add-in binary. |
+| `dommcp-<ver>.taz` | HCL domino-container Custom Add-on (`-custom-addon=<file>.taz#<sha256>`). |
+| `SHA256SUMS` | Integrity checksums. |
+
+Released binaries are attached to the **GitHub Releases** of this repository. Always verify checksums after
+download (`shasum -a 256 -c SHA256SUMS`).
+
+**glibc note (Linux):** the binary's glibc floor follows the libnotes of the target Domino. Match the
+artifact to your host — detect with `ldd --version | head -n 1`.
+
+## Documentation
+
+| File | Contents |
+|---|---|
+| [`QUICKSTART.md`](QUICKSTART.md) | Install per platform (Linux / Windows / container), first start, admin bootstrap, license, client setup. |
+| [`OPERATE.md`](OPERATE.md) | Console verbs, backup/restore, monitoring, license renewal. |
+| [`TOOLS.md`](TOOLS.md) | The MCP tool catalog by category (read / write / design / admin / DQL). |
+| [`CONFIG_EXAMPLE.json`](CONFIG_EXAMPLE.json) | Annotated config template (placeholders only). |
+| [`examples/`](examples/) | n8n workflow + connector notes. |
 
 ## Contact
-- Website: `it-dallmann.de`
-- More information: [https://it-dallmann.de/domino-mcp/](https://it-dallmann.de/domino-mcp/)
-- Please test the release in your environment and feel free to open GitHub issues for bugs, questions, or improvement ideas.
+
+- Website: [it-dallmann.de](https://it-dallmann.de)
+- Product page: [it-dallmann.de/domino-mcp](https://it-dallmann.de/domino-mcp/)
+- Please test in your environment and open a GitHub issue for bugs, questions, or ideas.

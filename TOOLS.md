@@ -1,96 +1,104 @@
 # DomMCP MCP Tools
 
-## Edition visibility
+The authoritative list is always `tools/list` against your server — what a given **token** sees depends on
+its grant and the active license edition. This catalog groups the tools by category.
 
-### Starter
-- `list_allowed_databases`
-- `get_database_info`
-- `profile_database`
-- `list_views`
-- `read_view_entries`
-- `get_document`
-- `get_server_health`
-- `extract_log_lines`
-- `list_fields_for_view`
-- `get_documents_batch`
-- `suggest_best_access_path`
+**Legend:** 🔍 = read-only · ✏️ = mutating (needs `write_intent_token` = `<token>-write` + a unique
+`idempotency_key`). Unmarked tools in a category inherit that category's nature.
 
-### Professional / Enterprise
-Includes Starter plus:
-- `probe_view_shape`
-- `probe_log_view`
-- `search_documents`
-- `get_document_schema`
-- `self_test`
-- `list_server_processes`
-- `list_active_users`
-- `get_server_stats`
-- `list_replica_status`
-- `show_database_users`
-- `list_server_groups`
-- `list_server_databases`
-- `get_database_acl`
-- `list_database_roles`
-- `get_database_acl_effective`
-- `query_documents_dql`
-- `query_documents_dql_explain`
-- `aggregate_documents`
-- `count_documents`
-- `count_log_events`
-- `aggregate_log_messages`
-- `aggregate_text_matches`
-- `fetch_snapshot_chunk`
-- `proxy_list_servers`
-- `proxy_list_tools`
-- `proxy_call_tool`
+> Read tools require only a Bearer token; **write / design / admin tools additionally require the
+> write-intent token.**
 
-## Tool categories
+## Read — discovery & views
 
-### Database & view access
-- `list_allowed_databases`
-- `get_database_info`
-- `profile_database`
-- `list_views`
-- `probe_view_shape`
-- `probe_log_view`
-- `read_view_entries`
-- `list_fields_for_view`
-- `suggest_best_access_path`
+- `list_allowed_databases` — databases this token may access.
+- `get_database_info` — title, size, counts, metadata.
+- `profile_database` — shape/size and best access path.
+- `suggest_best_access_path` — recommend how to read a database efficiently.
+- `list_views` — views/folders in a database.
+- `probe_view_shape` — column/structure probe of a view.
+- `probe_log_view` — structure probe for log views.
+- `read_view_entries` — read rows from a view (paged).
+- `list_fields_for_view` — fields/columns backing a view.
 
-### Document retrieval & query
-- `search_documents`
-- `get_document`
-- `get_documents_batch`
-- `get_document_schema`
-- `query_documents_dql`
-- `query_documents_dql_explain`
-- `fetch_snapshot_chunk`
+## Read — documents
 
-### Aggregation & logs
-- `aggregate_documents`
-- `count_documents`
-- `extract_log_lines`
-- `count_log_events`
-- `aggregate_log_messages`
-- `aggregate_text_matches`
+- `get_document` — one document by UNID.
+- `get_documents_batch` — many documents, projected fields.
+- `get_document_schema` — inferred field schema for a form/database.
+- `search_documents` — full-text search.
+- `fetch_snapshot_chunk` — page through a large, size-capped result.
 
-### Server operations & diagnostics
-- `get_server_health`
-- `self_test`
-- `list_server_processes`
-- `list_active_users`
-- `get_server_stats`
-- `list_replica_status`
-- `show_database_users`
-- `list_server_groups`
-- `list_server_databases`
+## DQL & aggregation
 
-### ACL
-- `get_database_acl`
-- `list_database_roles`
-- `get_database_acl_effective`
+- `query_documents_dql` — DQL query (use the `query` argument).
+- `query_documents_dql_explain` — preview the DQL execution plan.
+- `aggregate_documents` — group/aggregate document fields.
+- `count_documents` — count matching documents.
+- `aggregate_text_matches` — aggregate full-text matches.
+- `extract_log_lines` — pull lines from log views.
+- `count_log_events` — count log events.
+- `aggregate_log_messages` — group/aggregate log messages.
 
-### Proxy
-- `proxy_list_servers`
-- `proxy_list_tools`
-- `proxy_call_tool`
+## Write — documents ✏️
+
+- `create_document` — create a document (`form` + typed `fields` array).
+- `update_document` — update fields of a document (target by UNID).
+- `delete_document` — delete a document.
+
+## Design authoring
+
+- `dommcp_upsert_design_element` ✏️ — create/replace a design element: `form | subform | page | view |
+  folder | outline | frameset | navigator | agent_formula | agent_lotusscript | script_library |
+  database_script | shared_field | image | file | stylesheet`.
+- `dommcp_patch_design` ✏️ — lossless component-level patch (field/action/column/event/entry/frame).
+- `dommcp_upsert_lotusscript_agent_source` ✏️ — author + compile a LotusScript agent from structured source.
+- `dommcp_delete_design_element` ✏️ — delete a design element.
+- `dommcp_get_design_element` 🔍 — read a design element (DXL/details).
+- `dommcp_list_design_elements` 🔍 — list a database's design elements.
+- `dommcp_export_database_dxl` 🔍 — export database/design as DXL.
+
+## Database lifecycle ✏️
+
+- `dommcp_create_database_empty` — create an empty NSF (auto-creates a default `Main` view).
+- `dommcp_create_database_from_template` — create from a template.
+- `delete_database` — delete a database.
+- `db_compact` — compact a database.
+- `db_get_quota` 🔍 — read quota/size limits.
+- `db_set_quota` — set quota/size limits.
+
+## ACL & security
+
+- `dommcp_set_database_acl` ✏️ — add/update/delete ACL entries, define & assign roles, set admin server.
+  (Always use this tool for ACL — not `dommcp_upsert_design_element`.)
+- `get_database_acl` 🔍 — read the ACL.
+- `get_database_acl_effective` 🔍 — effective access for a name.
+- `list_database_roles` 🔍 — roles defined in a database.
+- `show_database_users` 🔍 — users/principals with access.
+
+## Administration — users, groups, server
+
+- `provision_person_token` ✏️ — mint a run-as token mapped to a Domino user.
+- `dommcp_register_user` ✏️ — register a Domino person.
+- `dommcp_manage_group` ✏️ — create/update groups & membership.
+- `server_console_command` ✏️ — run a scoped Domino console command.
+- `get_server_health` 🔍 — server health.
+- `get_server_stats` 🔍 — server statistics.
+- `self_test` 🔍 — internal self-test.
+- `list_server_processes` 🔍 — running server processes.
+- `list_active_users` 🔍 — active users/sessions.
+- `list_replica_status` 🔍 — replication status.
+- `list_server_groups` 🔍 — server/directory groups.
+- `list_server_databases` 🔍 — databases on the server.
+
+---
+
+### Edition gating (summary)
+
+- **READ** — read / DQL / aggregation tools.
+- **PRO** — adds the write ✏️ and design-authoring tools.
+- **ENTERPRISE** — full set incl. administration, higher limits.
+- **TRIAL** — time-boxed evaluation.
+
+Beyond the edition, a token only ever sees the tools its **grant** allows (`allowed_tools`), scoped to the
+databases, views, and fields the grant permits.
