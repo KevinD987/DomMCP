@@ -6,6 +6,9 @@ a client. Pick the section for your platform, then continue with **First start â
 Placeholders: `<host>` = your Domino server, `<token>` = a Bearer token you mint below, `<version>` = the
 release version.
 
+**Requirements:** HCL **Domino 14.5**. Linux x86_64 (current build: **glibc2.34**), Windows x64, or the HCL
+domino-container.
+
 ---
 
 ## 1) Install the add-in

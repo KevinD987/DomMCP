@@ -75,6 +75,9 @@ License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
 
 ## Platforms & artifacts
 
+**Requirements:** HCL **Domino 14.5** (server task add-in). Linux x86_64 (current build: **glibc2.34** —
+check yours with `ldd --version`), Windows x64, or the HCL domino-container.
+
 DomMCP ships for **Linux** and **Windows**, plus an **HCL domino-container Custom Add-on** tarball.
 
 | Artifact | Use |
