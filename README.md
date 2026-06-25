@@ -100,6 +100,7 @@ artifact to your host — detect with `ldd --version | head -n 1`.
 | [`QUICKSTART.md`](QUICKSTART.md) | Install per platform (Linux / Windows / container), first start, admin bootstrap, license, client setup. |
 | [`OPERATE.md`](OPERATE.md) | Console verbs, backup/restore, monitoring, license renewal. |
 | [`TOOLS.md`](TOOLS.md) | The MCP tool catalog by category (read / write / design / admin / DQL). |
+| [`default-config.json`](default-config.json) | Ready-to-use **seed** for a fresh install (token-less, `super-admin` grant template, placeholders). Place it in the data dir as `dommcp-default-config.json` — see QUICKSTART step 1b. |
 | [`CONFIG_EXAMPLE.json`](CONFIG_EXAMPLE.json) | Annotated config template (placeholders only). |
 | [`examples/`](examples/) | n8n workflow + connector notes. |
 

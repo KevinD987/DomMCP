@@ -49,10 +49,37 @@ After the container is up, continue with **First start** below (`load dommcp_add
 
 ---
 
+## 1b) Provide the seed config (binary installs — Linux & Windows)
+
+A fresh server builds its config NSF from a one-time JSON **seed**. The **container `.taz` already includes
+this seed**; for a **manual binary install you must place it yourself** before the first load, otherwise the
+add-in starts with no `super-admin` grant (`grants_loaded=0`) and `provision-admin` has nothing to bind to.
+
+Copy the bundled [`default-config.json`](default-config.json) into the Domino **data** directory as
+`dommcp-default-config.json`:
+
+```bash
+# Linux:
+cp default-config.json /local/notesdata/dommcp-default-config.json
+chown notes:notes /local/notesdata/dommcp-default-config.json
+```
+
+```powershell
+# Windows (data dir is the "Directory=" value in notes.ini, e.g. C:\Program Files\HCL\Domino\Data):
+Copy-Item default-config.json "C:\Program Files\HCL\Domino\Data\dommcp-default-config.json"
+```
+
+The seed is **token-less and contains no secrets** — only the `super-admin` grant template and placeholders.
+You mint the first token on the console in step 3.
+
+---
+
 ## 2) First start (NSF = source of truth)
 
 Start the add-in with **no path argument** so it auto-discovers its config NSF (`dommcp/dommcpcfg.nsf`). On a
-fresh server the first load seeds that NSF from the clean, token-less seed.
+fresh server the first load seeds that NSF from the clean, token-less seed placed in step 1b (the container
+`.taz` ships it for you). After the first load, confirm the seed took with `tell dommcp status` — it should
+report `grants_loaded=1`.
 
 ```text
 # On the Domino console (Linux: domino cmd "<verb>" / Windows: at the live console):
