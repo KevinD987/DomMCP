@@ -32,6 +32,21 @@ The add-in runs as a Domino server task (`load dommcp_addin`) and listens on por
 JSON-RPC 2.0 over `POST /mcp`. Configuration lives in an NSF on the server (**NSF = source of truth**);
 a JSON config file is used only to seed a fresh install.
 
+### Runtime layout (data directory)
+
+Both the **config NSF** and the **license file** live in the **`dommcp/` subfolder** of the Domino data
+directory — that is where the add-in looks for them (no env var or `notes.ini` entry needed):
+
+```
+<Domino data dir>/
+  dommcp/
+    dommcpcfg.nsf          # config NSF (tokens, grants, settings, license doc) — token-less when shipped
+    dommcp-license.json    # signed Ed25519 license (drop it here; auto-found next to the config NSF)
+    dommcpaudit.nsf        # audit log (created automatically next to the config NSF)
+```
+
+The add-in binary itself goes in the Domino **program** directory (where `nserver`/`nserver.exe` lives).
+
 ## Clients
 
 DomMCP speaks standard MCP and works with:
@@ -78,17 +93,17 @@ License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
 **Requirements:** HCL **Domino 14.5** (server task add-in). Linux x86_64 (current build: **glibc2.34** —
 check yours with `ldd --version`), Windows x64, or the HCL domino-container.
 
-DomMCP ships for **Linux** and **Windows**, plus an **HCL domino-container Custom Add-on** tarball.
+DomMCP ships for **Linux** and **Windows**, plus an **HCL domino-container Custom Add-on** tarball. The current
+build is in [`v0.0.249/`](v0.0.249):
 
-| Artifact | Use |
+| Artifact | Path |
 |---|---|
-| `dommcp_addin-linux-x64-glibc<ver>` | Linux Domino add-in binary (currently glibc2.34; request another floor if your Domino host needs it). |
-| `dommcp_addin-windows-x64.exe` | Windows Domino add-in binary. |
-| `dommcp-<ver>.taz` | HCL domino-container Custom Add-on (`-custom-addon=<file>.taz#<sha256>`). |
-| `SHA256SUMS` | Integrity checksums. |
+| Windows x64 add-in | [`v0.0.249/windows-x64/dommcp_addin-windows-x64.exe`](v0.0.249/windows-x64) |
+| Linux x86_64 add-in (glibc2.34) | [`v0.0.249/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.249/linux-x86_64) |
+| HCL domino-container Custom Add-on | [`v0.0.249/dommcp-0.0.249.taz`](v0.0.249) (`-custom-addon=<file>.taz#<sha256>`) |
+| Integrity checksums | `SHA256SUMS` in each folder |
 
-Released binaries are attached to the **GitHub Releases** of this repository. Always verify checksums after
-download (`shasum -a 256 -c SHA256SUMS`).
+Always verify checksums after download (`shasum -a 256 -c SHA256SUMS`).
 
 **glibc note (Linux):** the binary's glibc floor follows the libnotes of the target Domino. Match the
 artifact to your host — detect with `ldd --version | head -n 1`.

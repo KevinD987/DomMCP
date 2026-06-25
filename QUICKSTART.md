@@ -150,13 +150,19 @@ DomMCP verifies an offline Ed25519 license with a public key compiled into the b
 
 1. Obtain your signed license file (`dommcp-license.json`) — it contains `license_code` + `license_domain`
    issued for your domain.
-2. Drop it next to the config NSF:
+2. Drop it **into the `dommcp/` subfolder, next to the config NSF** (the add-in auto-finds it there — no env
+   var needed):
 
    ```bash
    # Linux / container:
    cp dommcp-license.json /local/notesdata/dommcp/dommcp-license.json
    chown notes:notes /local/notesdata/dommcp/dommcp-license.json
    chmod 640 /local/notesdata/dommcp/dommcp-license.json
+   ```
+
+   ```powershell
+   # Windows:
+   Copy-Item dommcp-license.json "C:\Program Files\HCL\Domino\Data\dommcp\dommcp-license.json"
    ```
 
 3. Reload the add-in so the license file is read (a plain `reload-config` does **not** re-read the license
