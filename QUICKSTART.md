@@ -56,7 +56,7 @@ A binary install needs its config NSF in the Domino **data** directory before th
 
 ### Recommended: ship the prebuilt config NSF (with design)
 
-Copy the bundled [`dommcpcfg-seed.nsf`](dommcpcfg-seed.nsf) into the **`dommcp/` subfolder** of the data
+Copy the bundled [`dommcpcfg.nsf`](dommcpcfg.nsf) into the **`dommcp/` subfolder** of the data
 directory as `dommcpcfg.nsf` (the add-in expects the config NSF there; create the subfolder if missing).
 It is **token-less and carries no secrets** — only the configuration **design** (the Token / Grant / License /
 Settings forms and views), so you can browse and edit the config in the Notes client. The add-in uses it as
@@ -65,19 +65,19 @@ the source of truth from the first load; you mint the first admin token in step 
 ```bash
 # Linux:
 mkdir -p /local/notesdata/dommcp
-cp dommcpcfg-seed.nsf /local/notesdata/dommcp/dommcpcfg.nsf
+cp dommcpcfg.nsf /local/notesdata/dommcp/dommcpcfg.nsf
 chown -R notes:notes /local/notesdata/dommcp
 ```
 
 ```powershell
 # Windows (data dir is the "Directory=" value in notes.ini, e.g. C:\Program Files\HCL\Domino\Data):
 New-Item -ItemType Directory -Force "C:\Program Files\HCL\Domino\Data\dommcp" | Out-Null
-Copy-Item dommcpcfg-seed.nsf "C:\Program Files\HCL\Domino\Data\dommcp\dommcpcfg.nsf"
+Copy-Item dommcpcfg.nsf "C:\Program Files\HCL\Domino\Data\dommcp\dommcpcfg.nsf"
 ```
 
 > If an older install left a `dommcpcfg.nsf` in the data-dir **root**, remove it so the subfolder copy is used.
 
-> `dommcpcfg-seed.nsf` is design-only (zero documents). On the first load the add-in reports
+> `dommcpcfg.nsf` is design-only (zero documents). On the first load the add-in reports
 > `grants_loaded=0` until you run `provision-admin` (step 3), which creates the admin grant + token in it.
 
 ### Alternative: JSON seed (no bundled NSF design)
