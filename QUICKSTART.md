@@ -34,10 +34,11 @@ Copy-Item dommcp_addin-windows-x64.exe "C:\Program Files\HCL\Domino\dommcp_addin
 Get-FileHash "C:\Program Files\HCL\Domino\dommcp_addin.exe" -Algorithm SHA256
 ```
 
-### HCL domino-container (Custom Add-on `.taz`)
+### HCL domino-container — option A: build-time Custom Add-on `.taz` (persistent, recommended)
 
 The `.taz` is an HCL "Custom Add-on" tarball: register it when you **build** the container image. It installs
-the binary and a clean, token-less seed config; it does **not** start the task and does **not** ship a license.
+the binary **and** the `dommcp/` templates, and survives image rebuilds. It does **not** start the task and
+does **not** ship a license.
 
 ```bash
 # 1) place dommcp-<version>.taz on the build host (or host it over HTTPS)
@@ -45,7 +46,29 @@ the binary and a clean, token-less seed config; it does **not** start the task a
 #    -custom-addon=dommcp-<version>.taz#<sha256>
 ```
 
-After the container is up, continue with **First start** below (`load dommcp_addin`).
+### HCL domino-container — option B: copy into a RUNNING container (`docker cp`)
+
+For a quick install into an already-running container (e.g. a demo), copy the files in with **`docker cp`** —
+the plain `cp` above runs on the host and does **not** reach into the container. `<c>` = your container name
+(find it with `docker ps --format '{{.Names}}'`).
+
+```bash
+# Binary → program dir (NOTE: /opt is NOT persistent — survives restarts, not an image rebuild):
+docker cp dommcp_addin-linux-x86_64-glibc2.34  <c>:/opt/hcl/domino/notes/latest/linux/dommcp_addin
+docker exec -u 0 <c> sh -lc 'chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin && chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin'
+
+# Whole dommcp/ folder (config + audit templates) → persistent data dir:
+docker cp dommcp                <c>:/local/notesdata/
+# License next to them (see step 4 for issuing it):
+docker cp dommcp-license.json   <c>:/local/notesdata/dommcp/dommcp-license.json
+docker exec -u 0 <c> sh -lc 'chown -R notes:notes /local/notesdata/dommcp && chmod 640 /local/notesdata/dommcp/*'
+```
+
+> `docker cp <source-on-host> <container>:<path>` — left is the host, right is the container. If `-u 0` is
+> blocked on your host, use `-u root`. With option B you've already done step 1b (the `dommcp/` copy) — skip it.
+
+The console commands in the steps below run via `docker exec <c> domino cmd '<verb>'`. After the container is
+up, continue with **First start** (`load dommcp_addin`).
 
 ---
 
