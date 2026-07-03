@@ -18,7 +18,7 @@ domino-container.
 ```bash
 # Use the provided Linux build (glibc2.34). Check your host glibc with: ldd --version | head -n 1
 # (if your target Domino needs a different glibc floor, request a matching build)
-cp dommcp_addin-linux-x64-glibc2.34 /opt/hcl/domino/notes/latest/linux/dommcp_addin
+cp dommcp_addin-linux-x86_64-glibc2.34 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin
 # Verify integrity first:
@@ -54,26 +54,27 @@ After the container is up, continue with **First start** below (`load dommcp_add
 A binary install needs its config NSF in the Domino **data** directory before the first load. The
 **container `.taz` already includes one**; for a manual binary install, place it yourself.
 
-### Recommended: ship the prebuilt config NSF (with design)
+### Recommended: ship the prebuilt DB templates (with design)
 
-Copy the bundled [`dommcpcfg.nsf`](dommcpcfg.nsf) into the **`dommcp/` subfolder** of the data
-directory as `dommcpcfg.nsf` (the add-in expects the config NSF there; create the subfolder if missing).
-It is **token-less and carries no secrets** — only the configuration **design** (the Token / Grant / License /
-Settings forms and views), so you can browse and edit the config in the Notes client. The add-in uses it as
-the source of truth from the first load; you mint the first admin token in step 3.
+The release ships a ready-to-drop [`v0.0.272/dommcp/`](v0.0.272/dommcp) folder — already in the target
+data-dir layout — with **`dommcpcfg.nsf`** (config) and **`dommcpaudit.nsf`** (browsable audit views). Both are
+**token-less and carry no secrets** — only the **design** (forms + views), so you can browse and edit them in
+the Notes client. Copy the whole folder into the data directory; the add-in uses the config NSF as source of
+truth from the first load, and you mint the first admin token in step 3.
 
 ```bash
-# Linux:
-mkdir -p /local/notesdata/dommcp
-cp dommcpcfg.nsf /local/notesdata/dommcp/dommcpcfg.nsf
+# Linux — copy the whole dommcp/ folder into /local/notesdata:
+cp -r dommcp /local/notesdata/
 chown -R notes:notes /local/notesdata/dommcp
 ```
 
 ```powershell
 # Windows (data dir is the "Directory=" value in notes.ini, e.g. C:\Program Files\HCL\Domino\Data):
-New-Item -ItemType Directory -Force "C:\Program Files\HCL\Domino\Data\dommcp" | Out-Null
-Copy-Item dommcpcfg.nsf "C:\Program Files\HCL\Domino\Data\dommcp\dommcpcfg.nsf"
+Copy-Item -Recurse dommcp "C:\Program Files\HCL\Domino\Data\dommcp"
 ```
+
+> The container `.taz` already contains this `dommcp/` folder (installed on first container setup) — you only
+> need this manual copy for a **binary** install.
 
 > If an older install left a `dommcpcfg.nsf` in the data-dir **root**, remove it so the subfolder copy is used.
 
@@ -140,6 +141,27 @@ curl -sS -X POST http://<host>:8088/mcp \
   -H 'Authorization: Bearer <secret>' \
   --data '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
+
+---
+
+## 3b) Sign the template databases (avoids a client warning)
+
+The shipped template NSFs are signed by the **build** server. On your server the Notes client may warn
+*"document has been modified or corrupted since signed"* when opening a config/audit document. Re-sign them
+once with **your** server's ID — DomMCP does this itself (no Admin client needed):
+
+```bash
+curl -sS -X POST http://<host>:8088/mcp \
+  -H 'Content-Type: application/json' -H 'Authorization: Bearer <secret>' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"dommcp_sign_database",
+    "arguments":{"database_path":"dommcp/dommcpcfg.nsf","scope":"all","reason":"install sign",
+      "change_ticket":"INSTALL","requested_by":"admin","idempotency_key":"sign-cfg",
+      "write_intent_token":"<secret>-write"}}}'
+# repeat with "database_path":"dommcp/dommcpaudit.nsf" and idempotency_key "sign-audit"
+```
+
+> Only needed once per copied template. Documents DomMCP creates/updates afterwards are auto-signed, so the
+> warning does not recur.
 
 ---
 

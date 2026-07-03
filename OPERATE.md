@@ -17,11 +17,11 @@ On Windows, type the same `tell dommcp <verb>` at the live server console.
 | Add-in binary | `/opt/hcl/domino/notes/latest/linux/dommcp_addin` |
 | Config NSF (source of truth) | `/local/notesdata/dommcp/dommcpcfg.nsf` |
 | License file | `/local/notesdata/dommcp/dommcp-license.json` |
-| Audit NSF | `/local/notesdata/dommcpaudit.nsf` |
+| Audit NSF | `/local/notesdata/dommcp/dommcpaudit.nsf` |
 | Seed (first boot only) | `/local/notesdata/dommcp-default-config.json` |
 
 On Windows the data directory is your Domino `notesdata` folder; the relative layout (`dommcp\dommcpcfg.nsf`,
-`dommcp\dommcp-license.json`, `dommcpaudit.nsf`) is the same.
+`dommcp\dommcp-license.json`, `dommcp\dommcpaudit.nsf`) is the same.
 
 ## Start / stop / reload
 
@@ -78,7 +78,7 @@ Back up two things together — they are the server's identity and entitlement:
 cp /local/notesdata/dommcp/dommcpcfg.nsf      /backup/dommcpcfg.nsf
 cp /local/notesdata/dommcp/dommcp-license.json /backup/dommcp-license.json
 # Optional: audit history
-cp /local/notesdata/dommcpaudit.nsf            /backup/dommcpaudit.nsf
+cp /local/notesdata/dommcp/dommcpaudit.nsf     /backup/dommcpaudit.nsf
 ```
 
 Restore by copying the files back into `/local/notesdata/dommcp/` (preserve `notes:notes` ownership and

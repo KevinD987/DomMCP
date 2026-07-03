@@ -101,8 +101,7 @@ build is in [`v0.0.272/`](v0.0.272) (previous: [`v0.0.249/`](v0.0.249)):
 | Linux x86_64 add-in (glibc2.34) | [`v0.0.272/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.272/linux-x86_64) |
 | Windows x64 add-in | [`v0.0.272/windows-x64/dommcp_addin-windows-x64.exe`](v0.0.272/windows-x64) |
 | HCL domino-container Custom Add-on | [`v0.0.272/dommcp-0.0.272.taz`](v0.0.272) (`-custom-addon=<file>.taz#<sha256>`) |
-| Config-DB template (polished forms/views) | [`v0.0.272/dommcpcfg.nsf`](v0.0.272) |
-| Audit-DB template (browsable audit views) | [`v0.0.272/dommcpaudit.nsf`](v0.0.272) |
+| DB templates (config + audit, in data-dir layout) | [`v0.0.272/dommcp/`](v0.0.272/dommcp) → copy the whole `dommcp/` folder into `/local/notesdata/` |
 | Integrity checksums | `SHA256SUMS` in each folder |
 
 **New in v0.0.272:** browsable audit database (auto-created, human-readable views), automatic re-signing of
@@ -122,7 +121,7 @@ artifact to your host — detect with `ldd --version | head -n 1`.
 | [`QUICKSTART.md`](QUICKSTART.md) | Install per platform (Linux / Windows / container), first start, admin bootstrap, license, client setup. |
 | [`OPERATE.md`](OPERATE.md) | Console verbs, backup/restore, monitoring, license renewal. |
 | [`TOOLS.md`](TOOLS.md) | The MCP tool catalog by category (read / write / design / admin / DQL). |
-| [`dommcpcfg.nsf`](dommcpcfg.nsf) | **Recommended fresh-install config NSF** — token-less, design-only (Token/Grant/License/Settings forms + views, no secrets). Copy to the data dir as `dommcpcfg.nsf` — see QUICKSTART step 1b. |
+| [`v0.0.272/dommcp/`](v0.0.272/dommcp) | **Recommended fresh-install DB templates** — token-less, no secrets: `dommcpcfg.nsf` (config: Token/Grant/License/Settings forms + views) and `dommcpaudit.nsf` (browsable audit views). Copy the folder to `/local/notesdata/dommcp/` — see QUICKSTART step 1b. |
 | [`default-config.json`](default-config.json) | Alternative JSON **seed** (token-less, `super-admin` grant template, placeholders; builds a config NSF *without* design). |
 | [`CONFIG_EXAMPLE.json`](CONFIG_EXAMPLE.json) | Annotated config template (placeholders only). |
 | [`examples/`](examples/) | n8n workflow + connector notes. |
