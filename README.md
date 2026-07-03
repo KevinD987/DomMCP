@@ -99,7 +99,7 @@ build is in [`v0.0.272/`](v0.0.272) (previous: [`v0.0.249/`](v0.0.249)):
 | Artifact | Path |
 |---|---|
 | Linux x86_64 add-in (glibc2.34) | [`v0.0.272/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.272/linux-x86_64) |
-| Windows x64 add-in | `v0.0.272/windows-x64/` (in progress — until then: [`v0.0.249/windows-x64/`](v0.0.249/windows-x64)) |
+| Windows x64 add-in | [`v0.0.272/windows-x64/dommcp_addin-windows-x64.exe`](v0.0.272/windows-x64) |
 | HCL domino-container Custom Add-on | [`v0.0.272/dommcp-0.0.272.taz`](v0.0.272) (`-custom-addon=<file>.taz#<sha256>`) |
 | Config-DB template (polished forms/views) | [`v0.0.272/dommcpcfg.nsf`](v0.0.272) |
 | Audit-DB template (browsable audit views) | [`v0.0.272/dommcpaudit.nsf`](v0.0.272) |
