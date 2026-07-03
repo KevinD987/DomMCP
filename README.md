@@ -129,5 +129,5 @@ artifact to your host — detect with `ldd --version | head -n 1`.
 ## Contact
 
 - Website: [it-dallmann.de](https://it-dallmann.de)
-- Product page: [it-dallmann.de/domino-mcp](https://it-dallmann.de/domino-mcp/)
+- Product page: [it-dallmann.de/blog/en/dommcp-domino-mcp-server.html](https://it-dallmann.de/blog/en/dommcp-domino-mcp-server.html/)
 - Please test in your environment and open a GitHub issue for bugs, questions, or ideas.
