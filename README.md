@@ -94,14 +94,21 @@ License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
 check yours with `ldd --version`), Windows x64, or the HCL domino-container.
 
 DomMCP ships for **Linux** and **Windows**, plus an **HCL domino-container Custom Add-on** tarball. The current
-build is in [`v0.0.249/`](v0.0.249):
+build is in [`v0.0.272/`](v0.0.272) (previous: [`v0.0.249/`](v0.0.249)):
 
 | Artifact | Path |
 |---|---|
-| Windows x64 add-in | [`v0.0.249/windows-x64/dommcp_addin-windows-x64.exe`](v0.0.249/windows-x64) |
-| Linux x86_64 add-in (glibc2.34) | [`v0.0.249/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.249/linux-x86_64) |
-| HCL domino-container Custom Add-on | [`v0.0.249/dommcp-0.0.249.taz`](v0.0.249) (`-custom-addon=<file>.taz#<sha256>`) |
+| Linux x86_64 add-in (glibc2.34) | [`v0.0.272/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.272/linux-x86_64) |
+| Windows x64 add-in | `v0.0.272/windows-x64/` (in progress — until then: [`v0.0.249/windows-x64/`](v0.0.249/windows-x64)) |
+| HCL domino-container Custom Add-on | [`v0.0.272/dommcp-0.0.272.taz`](v0.0.272) (`-custom-addon=<file>.taz#<sha256>`) |
+| Config-DB template (polished forms/views) | [`v0.0.272/dommcpcfg.nsf`](v0.0.272) |
+| Audit-DB template (browsable audit views) | [`v0.0.272/dommcpaudit.nsf`](v0.0.272) |
 | Integrity checksums | `SHA256SUMS` in each folder |
+
+**New in v0.0.272:** browsable audit database (auto-created, human-readable views), automatic re-signing of
+every DomMCP-written document (no more "modified since signed" client warnings), new `dommcp_sign_database`
+tool (bulk re-sign a copied template NSF with your server's ID), per-identity grant dedup, license doc kept
+in sync with the active license, UTF-8 numeric-entity decode fix.
 
 Always verify checksums after download (`shasum -a 256 -c SHA256SUMS`).
 

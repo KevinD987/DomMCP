@@ -1,0 +1,10 @@
+{
+  "artifact": "dommcp-0.0.272.taz",
+  "kind": "hcl-domino-container-custom-addon",
+  "version": "0.0.272",
+  "git_sha": "29b009a",
+  "taz_sha256": "495f5dee29216c027bd6a9b1c3f0b423dfba1fa38f3f415562594596cfe78584",
+  "taz_size": 1346856,
+  "custom_addon_arg": "-custom-addon=dommcp-0.0.272.taz#495f5dee29216c027bd6a9b1c3f0b423dfba1fa38f3f415562594596cfe78584",
+  "install_hint": "Copy dommcp-0.0.272.taz to /local/software (or host via HTTPS), then add '-custom-addon=dommcp-0.0.272.taz#495f5dee29216c027bd6a9b1c3f0b423dfba1fa38f3f415562594596cfe78584' to the domino-container build command. License is separate (issue_license.sh -> /local/notesdata/dommcp/dommcp-license.json); start with 'load dommcp_addin'. See docs/INSTALL_HOWTO.md."
+}
