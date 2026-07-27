@@ -90,19 +90,27 @@ License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
 
 ## Platforms & artifacts
 
-**Requirements:** HCL **Domino 14.5** (server task add-in). Linux x86_64 (current build: **glibc2.34** —
-check yours with `ldd --version`), Windows x64, or the HCL domino-container.
+**Requirements:** HCL **Domino 14.5** (server task add-in). Linux x86_64, Windows x64, or the HCL
+domino-container. On Linux, **match the binary to your glibc** — check with `ldd --version | head -n 1`.
 
-DomMCP ships for **Linux** and **Windows**, plus an **HCL domino-container Custom Add-on** tarball. The current
-build is in [`v0.0.272/`](v0.0.272) (previous: [`v0.0.249/`](v0.0.249)):
+The current Linux add-in is in [`v0.0.615/`](v0.0.615); Windows, the container add-on and the database
+templates still come from the last full release [`v0.0.272/`](v0.0.272) (previous: [`v0.0.249/`](v0.0.249)):
 
 | Artifact | Path |
 |---|---|
-| Linux x86_64 add-in (glibc2.34) | [`v0.0.272/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.272/linux-x86_64) |
+| **Linux x86_64 add-in (glibc ≥ 2.38)** | [`v0.0.615/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.38`](v0.0.615/linux-x86_64) |
+| Linux x86_64 add-in for **older distributions** (glibc 2.34 — RHEL 9, Ubuntu 22.04) | [`v0.0.272/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.272/linux-x86_64) |
+| **Handbook** (German / English, PDF) | [`v0.0.615/docs/`](v0.0.615/docs) |
 | Windows x64 add-in | [`v0.0.272/windows-x64/dommcp_addin-windows-x64.exe`](v0.0.272/windows-x64) |
 | HCL domino-container Custom Add-on | [`v0.0.272/dommcp-0.0.272.taz`](v0.0.272) (`-custom-addon=<file>.taz#<sha256>`) |
 | DB templates (config + audit, in data-dir layout) | [`v0.0.272/dommcp/`](v0.0.272/dommcp) → copy the whole `dommcp/` folder into `/local/notesdata/` |
 | Integrity checksums | `SHA256SUMS` in each folder |
+
+**New in v0.0.615** (Linux only in this drop — see [`v0.0.615/README.md`](v0.0.615) for the full list and the
+glibc table): a database created without a design now reports it at startup and can be repaired with
+`tell dommcp repair-design`; `dommcp_upsert_html_page` publishes a web UI from plain HTML; scheduled agents
+keep their schedule when patched; patched file resources keep their MIME type; keyword choice fields are
+clickable and verified after the write.
 
 **New in v0.0.272:** browsable audit database (auto-created, human-readable views), automatic re-signing of
 every DomMCP-written document (no more "modified since signed" client warnings), new `dommcp_sign_database`
@@ -121,6 +129,7 @@ artifact to your host — detect with `ldd --version | head -n 1`.
 | [`QUICKSTART.md`](QUICKSTART.md) | Install per platform (Linux / Windows / container), first start, admin bootstrap, license, client setup. |
 | [`OPERATE.md`](OPERATE.md) | Console verbs, backup/restore, monitoring, license renewal. |
 | [`TOOLS.md`](TOOLS.md) | The MCP tool catalog by category (read / write / design / admin / DQL). |
+| [`v0.0.615/docs/`](v0.0.615/docs) | **Administrator handbook as PDF**, German and English: install (Linux, container, Windows), first administrator, licence, functional test, configuration database, AI client, operation, backup, troubleshooting, acceptance checklist. |
 | [`v0.0.272/dommcp/`](v0.0.272/dommcp) | **Recommended fresh-install DB templates** — token-less, no secrets: `dommcpcfg.nsf` (config: Token/Grant/License/Settings forms + views) and `dommcpaudit.nsf` (browsable audit views). Copy the folder to `/local/notesdata/dommcp/` — see QUICKSTART step 1b. |
 | [`default-config.json`](default-config.json) | Alternative JSON **seed** (token-less, `super-admin` grant template, placeholders; builds a config NSF *without* design). |
 | [`CONFIG_EXAMPLE.json`](CONFIG_EXAMPLE.json) | Annotated config template (placeholders only). |
