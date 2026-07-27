@@ -100,6 +100,7 @@ templates still come from the last full release [`v0.0.272/`](v0.0.272) (previou
 |---|---|
 | **Linux x86_64 add-in (glibc ≥ 2.38)** | [`v0.0.615/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.38`](v0.0.615/linux-x86_64) |
 | Linux x86_64 add-in for **older distributions** (glibc 2.34 — RHEL 9, Ubuntu 22.04) | [`v0.0.272/linux-x86_64/dommcp_addin-linux-x86_64-glibc2.34`](v0.0.272/linux-x86_64) |
+| **DB templates (config + audit)** | [`v0.0.615/dommcp/`](v0.0.615/dommcp) → copy the whole `dommcp/` folder into `/local/notesdata/` |
 | **Handbook** (German / English, PDF) | [`v0.0.615/docs/`](v0.0.615/docs) |
 | Windows x64 add-in | [`v0.0.272/windows-x64/dommcp_addin-windows-x64.exe`](v0.0.272/windows-x64) |
 | HCL domino-container Custom Add-on | [`v0.0.272/dommcp-0.0.272.taz`](v0.0.272) (`-custom-addon=<file>.taz#<sha256>`) |

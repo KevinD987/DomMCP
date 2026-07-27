@@ -1,15 +1,25 @@
 # DomMCP v0.0.615 — Linux x86_64
 
-Linux add-in and the administrator handbooks. Windows binary, the container add-on tarball (`.taz`) and the
-database templates are **not** part of this drop — the previous full release
+Linux add-in, the database templates and the administrator handbooks. The Windows binary and the container
+add-on tarball (`.taz`) are **not** part of this drop — the previous full release
 [`v0.0.272/`](../v0.0.272) still carries those.
 
 | Artifact | File |
 |---|---|
 | Linux x86_64 add-in | [`linux-x86_64/dommcp_addin-linux-x86_64-glibc2.38`](linux-x86_64) |
+| Database templates (config + audit) | [`dommcp/`](dommcp) → copy the whole folder into `/local/notesdata/` |
 | Handbook (German) | [`docs/DomMCP-Installationsanleitung.pdf`](docs) |
 | Handbook (English) | [`docs/DomMCP-Installation-Guide.pdf`](docs) |
 | Checksums | `SHA256SUMS` in each folder |
+
+**Put the templates in place before the first start.** If `dommcpcfg.nsf` and `dommcpaudit.nsf` are missing,
+the add-in creates empty ones: the server runs, but those databases contain no form and no view and cannot be
+opened in the Notes client at all. Since this build the task warns about that at startup and
+`tell dommcp repair-design` installs the design into an existing database without touching its documents.
+
+The templates in this drop also fix two things you would otherwise see in the client: the choice fields
+(status, the 1|0 rights) are real dropdowns again instead of a flat, unclickable list, and the configuration
+database finally carries its own icon.
 
 ```bash
 shasum -a 256 -c SHA256SUMS
