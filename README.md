@@ -90,11 +90,12 @@ License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
 
 ## Platforms & artifacts
 
-**Requirements:** HCL **Domino 14.5** (server task add-in). Linux x86_64, Windows x64, or the HCL
-domino-container. On Linux, **match the binary to your glibc** — check with `ldd --version | head -n 1`.
+**Requirements:** HCL **Domino 12.0.2, 14.0 or 14.5** (server task add-in) — one binary covers all three.
+Linux x86_64, Windows x64, or the HCL domino-container. On Linux, **match the binary to your glibc** — check
+with `ldd --version | head -n 1`.
 
-The current Linux add-in is in [`v0.0.615/`](v0.0.615); Windows, the container add-on and the database
-templates still come from the last full release [`v0.0.272/`](v0.0.272) (previous: [`v0.0.249/`](v0.0.249)):
+The current Linux add-in, the database templates and the handbooks are in [`v0.0.615/`](v0.0.615); the
+Windows binary and the container add-on still come from the last full release [`v0.0.272/`](v0.0.272) (previous: [`v0.0.249/`](v0.0.249)):
 
 | Artifact | Path |
 |---|---|

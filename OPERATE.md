@@ -32,7 +32,14 @@ tell dommcp reload-config         # re-read config from the NSF (NOT the license
 ```
 
 > A new **license file** is only picked up on a full reload: `tell dommcp quit` then `load dommcp_addin`.
-> `reload-config` re-reads the config NSF, not the license file.
+> `reload-config` re-reads the config NSF, not the license file. Check afterwards that the `fingerprint=…`
+> in `tell dommcp status` has changed.
+
+> **If `dommcp_addin` is listed in `ServerTasks=`**, Domino may restart the task immediately after `quit` —
+> the old and the new instance then fight over port 8088 and neither comes up properly. That looks like a
+> broken binary but is only a race. When swapping the program file, **replace it and restart the whole
+> Domino server**; never kill the task hard (`kill -9`), which leaves shared memory behind and blocks the
+> next start.
 
 ## Console verbs
 
@@ -43,8 +50,30 @@ tell dommcp reload-config         # re-read config from the NSF (NOT the license
 | `reload-config` | Re-read config from the NSF. |
 | `provision-admin <secret>` | Mint/rotate the first admin token (≥ 8 chars; write token = `<secret>-write`). |
 | `DEBUG ON` / `DEBUG OFF` | Toggle verbose console logging. |
+| `repair-design [<target.nsf> <source.nsf>]` | Install a **missing design** into the config/audit database — see below. Documents, ACL and icon are left untouched. |
 | `quit` | Stop the add-in. |
 | `help` | List available verbs. |
+
+### „The database cannot be opened in the Notes client"
+
+If the shipped databases were not in place at first start, DomMCP created **empty** ones: the server works,
+but they hold no form and no view, so the client cannot open them. Since v0.0.615 the task says so at every
+start:
+
+```text
+DomMCP WARNING: the config database '…/dommcpcfg.nsf' has NO DESIGN (no forms, no views).
+```
+
+Put the delivered database next to it as `<name>-master.nsf` (or hand over both paths explicitly) and run:
+
+```text
+tell dommcp repair-design
+```
+
+From v0.0.621 on, a **master template** (`dommcp/dommcpcfg.ntf`, `dommcp/dommcpaudit.ntf`) shipped next to
+the databases prevents the situation altogether: the add-in creates them from the template on first start —
+design without documents — and marks them to inherit, so an update is a newer `.ntf` plus Domino's Design
+task.
 
 ## Health & monitoring
 

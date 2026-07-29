@@ -6,8 +6,11 @@ a client. Pick the section for your platform, then continue with **First start �
 Placeholders: `<host>` = your Domino server, `<token>` = a Bearer token you mint below, `<version>` = the
 release version.
 
-**Requirements:** HCL **Domino 14.5**. Linux x86_64 (current build: **glibc2.34**), Windows x64, or the HCL
-domino-container.
+**Requirements:** HCL **Domino 12.0.2, 14.0 or 14.5** — one binary covers all three. Linux x86_64,
+Windows x64, or the HCL domino-container.
+
+On Linux, match the binary to your **glibc**: `v0.0.615` needs **≥ 2.38** (Ubuntu 24.04, Debian 13, RHEL 10),
+`v0.0.272` runs on **2.34** (RHEL 9, Ubuntu 22.04). Check with `ldd --version | head -n 1`.
 
 ---
 
@@ -16,9 +19,8 @@ domino-container.
 ### Linux
 
 ```bash
-# Use the provided Linux build (glibc2.34). Check your host glibc with: ldd --version | head -n 1
-# (if your target Domino needs a different glibc floor, request a matching build)
-cp dommcp_addin-linux-x86_64-glibc2.34 /opt/hcl/domino/notes/latest/linux/dommcp_addin
+# Use the build that matches your glibc — check with: ldd --version | head -n 1
+cp dommcp_addin-linux-x86_64-glibc2.38 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin
 # Verify integrity first:
@@ -54,7 +56,7 @@ the plain `cp` above runs on the host and does **not** reach into the container.
 
 ```bash
 # Binary → program dir (NOTE: /opt is NOT persistent — survives restarts, not an image rebuild):
-docker cp dommcp_addin-linux-x86_64-glibc2.34  <c>:/opt/hcl/domino/notes/latest/linux/dommcp_addin
+docker cp dommcp_addin-linux-x86_64-glibc2.38  <c>:/opt/hcl/domino/notes/latest/linux/dommcp_addin
 docker exec -u 0 <c> sh -lc 'chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin && chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin'
 
 # Whole dommcp/ folder (config + audit templates) → persistent data dir:
