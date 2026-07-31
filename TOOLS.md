@@ -3,8 +3,8 @@
 The authoritative list is always `tools/list` against your server — what a given **token** sees depends on
 its grant and the active license edition. This catalog groups the tools by category.
 
-**Legend:** 🔍 = read-only · ✏️ = mutating (needs `write_intent_token` = `<token>-write` + a unique
-`idempotency_key`). Unmarked tools in a category inherit that category's nature.
+**Legend:** 🔍 = read-only · ✏️ = mutating (needs a unique `idempotency_key`; the write intent is added by
+the server — see below). Unmarked tools in a category inherit that category's nature.
 
 > Read tools require only a Bearer token. Write / design / admin tools additionally need a **write intent**
 > — but over MCP the server derives it from your authenticated session, so **an MCP client sends nothing

@@ -9,8 +9,12 @@ release version.
 **Requirements:** HCL **Domino 12.0.2, 14.0 or 14.5** — one binary covers all three. Linux x86_64,
 Windows x64, or the HCL domino-container.
 
-On Linux, match the binary to your **glibc**: `v0.0.615` needs **≥ 2.38** (Ubuntu 24.04, Debian 13, RHEL 10),
-`v0.0.272` runs on **2.34** (RHEL 9, Ubuntu 22.04). Check with `ldd --version | head -n 1`.
+All downloads are on the [Releases page](https://github.com/KevinD987/DomMCP/releases).
+
+On Linux, match the binary to your **glibc** — check with `ldd --version | head -n 1`. The current build
+(v0.0.650) needs **≥ 2.38** (Ubuntu 24.04, Debian 13, RHEL/Rocky 10); v0.0.272 still runs on **2.34**
+(RHEL/Rocky 9, Ubuntu 22.04). **Below 2.34 — e.g. RHEL/Rocky 8 — no current binary works**; use the
+container add-on, or ask for a build against an older glibc.
 
 ---
 
@@ -81,15 +85,16 @@ A binary install needs its config NSF in the Domino **data** directory before th
 
 ### Recommended: ship the prebuilt DB templates (with design)
 
-The release ships a ready-to-drop [`v0.0.272/dommcp/`](v0.0.272/dommcp) folder — already in the target
-data-dir layout — with **`dommcpcfg.nsf`** (config) and **`dommcpaudit.nsf`** (browsable audit views). Both are
+Every release carries **`dommcpcfg.nsf`** (config) and **`dommcpaudit.nsf`** (browsable audit views) as
+assets — download both from the [Releases page](https://github.com/KevinD987/DomMCP/releases). Both are
 **token-less and carry no secrets** — only the **design** (forms + views), so you can browse and edit them in
-the Notes client. Copy the whole folder into the data directory; the add-in uses the config NSF as source of
-truth from the first load, and you mint the first admin token in step 3.
+the Notes client. Put both files into the `dommcp/` subfolder of the data directory; the add-in uses the
+config NSF as source of truth from the first load, and you mint the first admin token in step 3.
 
 ```bash
-# Linux — copy the whole dommcp/ folder into /local/notesdata:
-cp -r dommcp /local/notesdata/
+# Linux — both NSFs belong in the dommcp/ subfolder of the data directory:
+mkdir -p /local/notesdata/dommcp
+cp dommcpcfg.nsf dommcpaudit.nsf /local/notesdata/dommcp/
 chown -R notes:notes /local/notesdata/dommcp
 ```
 
