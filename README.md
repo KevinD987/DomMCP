@@ -127,10 +127,23 @@ with `ldd --version | head -n 1`, then:
 | RHEL / Rocky / Alma 9 | 2.34 | ❌ | ✅ |
 | RHEL / Rocky / Alma 8 | 2.28 | ❌ | ❌ |
 
-**For glibc below 2.34 there is currently no working binary** — not even an older release. Earlier versions
-of this page pointed glibc-2.28 hosts at v0.0.272; that was wrong, because that build needs 2.34 itself and
-will not load either. A build against an older glibc is possible (it is a build-container question, not a
-code question) — ask, and we will produce one.
+**For glibc below 2.34 there is no working binary, and for Domino 14 there cannot be one.** The floor is not
+ours to choose: HCL's own `libnotes.so` — the library the add-in links against — requires it. Measured with
+`objdump -T` on the shipped runtimes:
+
+| Domino | `libnotes.so` requires |
+|---|---|
+| 12.0.2 | GLIBC_2.17 |
+| 14.0 | GLIBC_2.34 |
+| 14.5 | GLIBC_2.34 |
+
+So on RHEL/Rocky/Alma 8 (glibc 2.28), **Domino 14 itself does not run** — with or without DomMCP. An earlier
+version of this page pointed glibc-2.28 hosts at v0.0.272 and offered to build against an older glibc; both
+were wrong, and we corrected them rather than leave them standing.
+
+If you run **Domino 12.0.2** on such a host, a build is possible — that runtime only needs glibc 2.17. Ask,
+and we will produce a 12.0.2-specific artifact. For Domino 14 the answer is the container add-on, or a newer
+host OS.
 
 The container add-on sidesteps the issue entirely: the `.taz` runs inside the HCL domino-container image.
 

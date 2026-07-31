@@ -13,8 +13,9 @@ All downloads are on the [Releases page](https://github.com/KevinD987/DomMCP/rel
 
 On Linux, match the binary to your **glibc** — check with `ldd --version | head -n 1`. The current build
 (v0.0.650) needs **≥ 2.38** (Ubuntu 24.04, Debian 13, RHEL/Rocky 10); v0.0.272 still runs on **2.34**
-(RHEL/Rocky 9, Ubuntu 22.04). **Below 2.34 — e.g. RHEL/Rocky 8 — no current binary works**; use the
-container add-on, or ask for a build against an older glibc.
+(RHEL/Rocky 9, Ubuntu 22.04). **Below 2.34 — e.g. RHEL/Rocky 8 — nothing works**, because HCL's own
+`libnotes.so` for Domino 14 requires glibc 2.34; that host cannot run Domino 14 at all. Use the container
+add-on, a newer host OS, or ask us for a Domino-12.0.2-specific build (that runtime needs only glibc 2.17).
 
 ---
 
