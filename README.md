@@ -55,6 +55,27 @@ DomMCP speaks standard MCP and works with:
 - **OpenAI / ChatGPT** — MCP-compatible connector.
 - **n8n / scripts / any Bearer client** — plain `Authorization: Bearer <token>` against `POST /mcp`.
 
+### ⚠️ Prerequisite for the hosted connectors: public HTTPS
+
+The claude.ai and ChatGPT connectors need DomMCP reachable over **public HTTPS**, behind a reverse proxy
+**you run**, forwarding `Host` and `X-Forwarded-Proto: https`. DomMCP derives the OAuth redirect URLs, the
+`issuer` and the `resource_metadata` hint in its `WWW-Authenticate` challenge from those two headers — if
+they do not arrive correctly, it builds addresses that are unreachable from outside and the sign-in fails
+with an error that does not point at the cause.
+
+Verify it in one call, **from outside**, through the public name:
+
+```bash
+curl -s https://dommcp.example.com/.well-known/oauth-protected-resource
+# expect: {"resource":"https://dommcp.example.com/mcp", …}
+#   scheme MUST be https, host MUST be your public name — an http:// or an internal IP
+#   means the proxy is not passing the headers through.
+```
+
+Ready-made nginx and Caddy configurations plus a full verification checklist ship with the handbook.
+A Bearer client (n8n, a script) does **not** need any of this — it can talk to `http://<host>:8088/mcp`
+directly on the internal network.
+
 See [`QUICKSTART.md`](QUICKSTART.md) for connecting each client and
 [`examples/`](examples/) for a worked n8n workflow.
 

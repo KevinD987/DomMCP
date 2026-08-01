@@ -240,8 +240,23 @@ DomMCP verifies an offline Ed25519 license with a public key compiled into the b
 ### Anthropic Claude (custom connector)
 
 Claude connects over OAuth 2.1 + Streamable HTTP. You need DomMCP reachable over **public HTTPS** (a reverse
-proxy that forwards `Host` and `X-Forwarded-Proto: https` to `http://<host>:8088`). Then in claude.ai add a
-**custom connector** pointing at your HTTPS `/mcp` URL and complete the consent (it asks for a DomMCP token).
+proxy that forwards `Host` and `X-Forwarded-Proto: https` to `http://<host>:8088`).
+
+**Check that first — it is the step people miss**, and the failure shows up much later as a sign-in that
+just does not complete:
+
+```bash
+curl -s https://dommcp.example.com/.well-known/oauth-protected-resource
+# expect: {"resource":"https://dommcp.example.com/mcp", …}
+#   http:// or an internal IP here = the proxy is not forwarding the headers.
+```
+
+If the proxy is out of your hands, set **`PublicBaseUrl`** in GlobalSettings instead — DomMCP then ignores
+`Host`/`X-Forwarded-Proto` for address building entirely. Using `X-Forwarded-*`? Then `TrustedProxies` must
+list the proxy's address, otherwise DomMCP deliberately discards those headers (anti-spoofing).
+
+Then in claude.ai add a **custom connector** pointing at your HTTPS `/mcp` URL and complete the consent
+(it asks for a DomMCP token).
 
 ### OpenAI / ChatGPT
 
