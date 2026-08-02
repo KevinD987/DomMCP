@@ -119,29 +119,30 @@ verified on all three. Linux x86_64, Windows x64, or the HCL domino-container.
 in version folders in this repository; those folders are gone — every artifact, including the older versions,
 is now a release asset. That keeps a clone small and gives each download a stable URL and a checksum.
 
-### Current release — [v0.0.650](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.650)
+### Current release — [v0.0.671](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.671)
 
-Linux and Windows come from the **same commit** in this release — the first time since v0.0.272 that both
-platforms are current.
+Linux and Windows come from the **same commit** (`e304c36`) in this release. Each binary ships with its own
+`manifest-*.json` naming that commit and the artifact's SHA-256, so the claim is checkable rather than
+promised.
 
 | Artifact | Asset |
 |---|---|
-| **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin-linux-x86_64-glibc2.38` |
+| **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin-linux-x64-glibc2.38` |
 | **Windows x64 add-in** | `dommcp_addin-windows-x64.exe` |
-| **HCL domino-container Custom Add-on** | `dommcp-0.0.650.taz` (`-custom-addon=<file>.taz#<sha256>`) |
-| **DB templates** (config + audit, token-less) | `dommcpcfg.nsf`, `dommcpaudit.nsf` |
+| **HCL domino-container Custom Add-on** | `dommcp-0.0.671.taz` (`-custom-addon=<file>.taz#<sha256>`) |
+| **DB master templates** (config + audit, token-less) | `dommcpcfg.ntf`, `dommcpaudit.ntf` |
 | **Handbook** (German / English, PDF) | `DomMCP-Installationsanleitung.pdf`, `DomMCP-Installation-Guide.pdf` |
 | Build provenance | `manifest-linux.json`, `manifest-windows.json`, `addon-manifest.json` |
-| Integrity checksums | `SHA256SUMS*` |
+| Integrity checksums | `SHA256SUMS` |
 
-Always verify after download: `shasum -a 256 -c SHA256SUMS-linux-x86_64`.
+Always verify after download: `shasum -a 256 -c SHA256SUMS`.
 
 ### ⚠️ Check your glibc first (Linux)
 
 The add-in links against the libnotes of the target Domino, and that sets a **minimum glibc**. Detect yours
 with `ldd --version | head -n 1`, then:
 
-| Distribution | glibc | v0.0.650 (≥ 2.38) | v0.0.272 (≥ 2.34) |
+| Distribution | glibc | v0.0.671 (≥ 2.38) | v0.0.272 (≥ 2.34) |
 |---|---|---|---|
 | Ubuntu 24.04 LTS, Debian 13, RHEL/Rocky/Alma 10 | 2.38–2.41 | ✅ | ✅ |
 | Ubuntu 22.04 LTS | 2.35 | ❌ | ✅ |
@@ -170,10 +171,20 @@ The container add-on sidesteps the issue entirely: the `.taz` runs inside the HC
 
 ### Older releases
 
+[v0.0.650](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.650),
 [v0.0.615](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.615) (Linux only),
 [v0.0.272](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.272) and
 [v0.0.249](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.249) remain available. Use v0.0.272 only if
 your glibc rules out the current build — it is many months behind.
+
+**New in v0.0.671:** a grant's database list is now bound to `allow_all_databases` instead of being inferred
+from `allowed_tools: "*"` — a token scoped to one database could otherwise see the server's whole inventory.
+Grants can be scoped to a **directory** (`DatabasePathPrefix`) with a limit on how many databases may live
+there and a default size quota. A design write that loses code now repairs itself instead of failing the
+call, and a scheduled agent whose LotusScript does not compile is rolled back to the version that did — it
+used to be left broken. Writes that had to fall back to the lower-fidelity path say so in one sentence, as
+does a truncated server list. Several tools got cheaper to call: the batch design upsert writes many
+elements in one round trip, and arguments the server fills in itself are no longer advertised.
 
 **New in v0.0.650:** Windows binary current again (it had silently stopped being built for four weeks);
 database titles with umlauts no longer break the JSON response; patching an agent keeps its UNID and note id;
@@ -196,7 +207,7 @@ UTF-8 numeric-entity decode fix.
 | [`OPERATE.md`](OPERATE.md) | Console verbs, backup/restore, monitoring, license renewal. |
 | [`TOOLS.md`](TOOLS.md) | The MCP tool catalog by category (read / write / design / admin / DQL). |
 | Handbook PDFs (release assets) | **Administrator handbook**, German and English: install (Linux, container, Windows), first administrator, licence, functional test, configuration database, AI client, operation, backup, troubleshooting, acceptance checklist. |
-| `dommcpcfg.nsf` / `dommcpaudit.nsf` (release assets) | **Recommended fresh-install DB templates** — token-less, no secrets: config (Token/Grant/License/Settings forms + views) and a browsable audit database. Put both into `<data dir>/dommcp/` — see QUICKSTART step 1b. |
+| `dommcpcfg.ntf` / `dommcpaudit.ntf` (release assets) | **Recommended fresh-install DB master templates** — token-less, no secrets: config (Token/Grant/License/Settings forms + views) and a browsable audit database. Put both into `<data dir>/dommcp/`; the add-in creates the databases from them on first load — see QUICKSTART step 1b. |
 | [`default-config.json`](default-config.json) | Alternative JSON **seed** (token-less, `super-admin` grant template, placeholders; builds a config NSF *without* design). |
 | [`CONFIG_EXAMPLE.json`](CONFIG_EXAMPLE.json) | Annotated config template (placeholders only). |
 | [`examples/`](examples/) | n8n workflow + connector notes. |

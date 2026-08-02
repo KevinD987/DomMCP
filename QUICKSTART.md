@@ -12,7 +12,7 @@ Windows x64, or the HCL domino-container.
 All downloads are on the [Releases page](https://github.com/KevinD987/DomMCP/releases).
 
 On Linux, match the binary to your **glibc** — check with `ldd --version | head -n 1`. The current build
-(v0.0.650) needs **≥ 2.38** (Ubuntu 24.04, Debian 13, RHEL/Rocky 10); v0.0.272 still runs on **2.34**
+(v0.0.671) needs **≥ 2.38** (Ubuntu 24.04, Debian 13, RHEL/Rocky 10); v0.0.272 still runs on **2.34**
 (RHEL/Rocky 9, Ubuntu 22.04). **Below 2.34 — e.g. RHEL/Rocky 8 — nothing works**, because HCL's own
 `libnotes.so` for Domino 14 requires glibc 2.34; that host cannot run Domino 14 at all. Use the container
 add-on, a newer host OS, or ask us for a Domino-12.0.2-specific build (that runtime needs only glibc 2.17).
@@ -25,7 +25,7 @@ add-on, a newer host OS, or ask us for a Domino-12.0.2-specific build (that runt
 
 ```bash
 # Use the build that matches your glibc — check with: ldd --version | head -n 1
-cp dommcp_addin-linux-x86_64-glibc2.38 /opt/hcl/domino/notes/latest/linux/dommcp_addin
+cp dommcp_addin-linux-x64-glibc2.38 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin
 # Verify integrity first:
@@ -61,7 +61,7 @@ the plain `cp` above runs on the host and does **not** reach into the container.
 
 ```bash
 # Binary → program dir (NOTE: /opt is NOT persistent — survives restarts, not an image rebuild):
-docker cp dommcp_addin-linux-x86_64-glibc2.38  <c>:/opt/hcl/domino/notes/latest/linux/dommcp_addin
+docker cp dommcp_addin-linux-x64-glibc2.38  <c>:/opt/hcl/domino/notes/latest/linux/dommcp_addin
 docker exec -u 0 <c> sh -lc 'chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin && chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin'
 
 # Whole dommcp/ folder (config + audit templates) → persistent data dir:
@@ -86,16 +86,20 @@ A binary install needs its config NSF in the Domino **data** directory before th
 
 ### Recommended: ship the prebuilt DB templates (with design)
 
-Every release carries **`dommcpcfg.nsf`** (config) and **`dommcpaudit.nsf`** (browsable audit views) as
-assets — download both from the [Releases page](https://github.com/KevinD987/DomMCP/releases). Both are
-**token-less and carry no secrets** — only the **design** (forms + views), so you can browse and edit them in
-the Notes client. Put both files into the `dommcp/` subfolder of the data directory; the add-in uses the
-config NSF as source of truth from the first load, and you mint the first admin token in step 3.
+Every release carries **`dommcpcfg.ntf`** (config) and **`dommcpaudit.ntf`** (browsable audit views) as
+assets — download both from the [Releases page](https://github.com/KevinD987/DomMCP/releases). These are
+Domino **master templates**: they are **token-less and carry no secrets** — only the **design** (forms +
+views). Put both files into the `dommcp/` subfolder of the data directory. On its first load the add-in
+creates the two databases *from* these templates and records the design inheritance, so a later update is a
+newer `.ntf` plus Domino's design task. You mint the first admin token in step 3.
+
+Leave the templates out and the add-in still starts — but it then creates **empty** databases that the Notes
+client cannot open. It says so at startup; `tell dommcp repair-design` fixes it afterwards.
 
 ```bash
-# Linux — both NSFs belong in the dommcp/ subfolder of the data directory:
+# Linux — both templates belong in the dommcp/ subfolder of the data directory:
 mkdir -p /local/notesdata/dommcp
-cp dommcpcfg.nsf dommcpaudit.nsf /local/notesdata/dommcp/
+cp dommcpcfg.ntf dommcpaudit.ntf /local/notesdata/dommcp/
 chown -R notes:notes /local/notesdata/dommcp
 ```
 
