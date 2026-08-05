@@ -215,5 +215,7 @@ UTF-8 numeric-entity decode fix.
 ## Contact
 
 - Website: [it-dallmann.de](https://it-dallmann.de)
-- Product page: [it-dallmann.de/blog/en/dommcp-domino-mcp-server.html](https://it-dallmann.de/blog/en/dommcp-domino-mcp-server.html)
+- Product page: [it-dallmann.de/dommcp.html](https://it-dallmann.de/dommcp.html) (German)
+- Background article: [How DomMCP works](https://it-dallmann.de/blog/en/dommcp-domino-mcp-server.html) (English)
+- HCL Domino Marketplace: [domino-dommcp](https://marketplace.hcl-software.com/domino/catalog/domino-dommcp)
 - Please test in your environment and open a GitHub issue for bugs, questions, or ideas.
