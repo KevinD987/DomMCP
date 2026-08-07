@@ -31,7 +31,8 @@ tell dommcp quit                  # stop
 tell dommcp reload-config         # re-read config from the NSF (NOT the license file)
 ```
 
-> A new **license file** is only picked up on a full reload: `tell dommcp quit` then `load dommcp_addin`.
+> A new **license file** is only picked up on a full reload — `tell dommcp quit` + `load dommcp_addin` when
+> the task is *not* in `ServerTasks=`, otherwise a restart of the whole server (see the next note).
 > `reload-config` re-reads the config NSF, not the license file. Check afterwards that the `fingerprint=…`
 > in `tell dommcp status` has changed.
 
@@ -124,9 +125,23 @@ is installed; an unlicensed server runs a 7-day read-only evaluation and then bl
 1. Check the current expiry: `curl -sS http://<host>:8088/healthz` → `license.expires_at_unix` /
    `valid_until`.
 2. Obtain a renewed `dommcp-license.json` (new `license_code`, same domain).
-3. Replace `/local/notesdata/dommcp/dommcp-license.json` (keep `notes:notes`, `640`).
-4. Full reload: `tell dommcp quit` then `load dommcp_addin`.
-5. Verify `license.status` = `valid` with the new expiry.
+3. Replace the license file (keep `notes:notes`, `640`). **Make sure you replace the file the server
+   actually reads** — the path is resolved in this order: `LicenseFilePath` in the GlobalSettings document
+   → the `DOMMCP_LICENSE_FILE` variable in `notes.ini` → the default `dommcp-license.json` **next to the
+   config NSF** (`/local/notesdata/dommcp/`). If one of the first two is set, it wins, even if it points at
+   a different directory. One command settles it:
+
+   ```bash
+   grep -i '^DOMMCP_LICENSE_FILE=' /local/notesdata/notes.ini    # empty output → the default applies
+   ```
+
+   Editing the wrong file is quiet, not loud: the config NSF also holds a `License` document, so the server
+   stays licensed on the old terms and simply never picks up the new code.
+4. Reload — **how depends on `ServerTasks=`** (see the note further up): if `dommcp_addin` is listed there,
+   restart the whole server (`systemctl restart domino`, or restart the container); only if it is *not*
+   listed is `tell dommcp quit` + `load dommcp_addin` the right pair.
+5. Verify `license.status` = `valid` with the new expiry, and that `fingerprint=…` in `tell dommcp status`
+   has actually changed. An unchanged fingerprint means the new file was not read.
 
 **Renewal reminder:** set a calendar reminder ~30 days before `valid_until`. A renewal is a file swap plus a
 reload — no reinstall, no data migration.

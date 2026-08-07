@@ -222,13 +222,29 @@ DomMCP verifies an offline Ed25519 license with a public key compiled into the b
    Copy-Item dommcp-license.json "C:\Program Files\HCL\Domino\Data\dommcp\dommcp-license.json"
    ```
 
-3. Reload the add-in so the license file is read (a plain `reload-config` does **not** re-read the license
-   file):
+3. Reload so the license file is read — a plain `reload-config` does **not** re-read it.
+
+   **Which command depends on whether `dommcp_addin` is listed in `ServerTasks=`:**
+
+   ```bash
+   grep -i '^ServerTasks' /local/notesdata/notes.ini
+   ```
+
+   *Not listed* (the state right after a first install):
 
    ```text
    tell dommcp quit
    load dommcp_addin
    ```
+
+   *Listed* — which we recommend, so the task survives a server start:
+
+   ```bash
+   systemctl restart domino          # in a container: restart the container
+   ```
+
+   Do **not** use `quit` in that case: Domino starts the task again immediately, the old and the new process
+   fight over port 8088, and the result looks like a broken program even with a perfectly good one.
 
 4. Verify:
 
