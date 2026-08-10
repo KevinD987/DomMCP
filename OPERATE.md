@@ -65,6 +65,9 @@ start:
 DomMCP WARNING: the config database '…/dommcpcfg.nsf' has NO DESIGN (no forms, no views).
 ```
 
+`repair-design` writes the design **into the existing database** instead of creating a new one from a
+template, so the documents already in it survive and it does not run into `ERR_DB_ALREADY_OPEN`.
+
 Put the delivered database next to it as `<name>-master.nsf` (or hand over both paths explicitly) and run:
 
 ```text
@@ -75,6 +78,17 @@ From v0.0.621 on, a **master template** (`dommcp/dommcpcfg.ntf`, `dommcp/dommcpa
 the databases prevents the situation altogether: the add-in creates them from the template on first start —
 design without documents — and marks them to inherit, so an update is a newer `.ntf` plus Domino's Design
 task.
+
+### If the config database will not open
+
+A config NSF that is present but **cannot be opened** is not recreated. The server says so on the console and
+leaves the file alone: overwriting an existing database would be final, whereas one that merely failed to
+open can usually still be repaired (`fixup`) or restored from backup. Restore or repair it — do not delete
+it to "let the server rebuild it".
+
+If the file is genuinely **gone**, the next start creates it fresh and you are back at the beginning: run
+`provision-admin` once. The previous tokens cannot be recovered — only their hashes ever lived in the NSF,
+and a hash does not turn back into a secret. Every client needs a new token.
 
 ## Health & monitoring
 
@@ -112,7 +126,13 @@ cp /local/notesdata/dommcp/dommcpaudit.nsf     /backup/dommcpaudit.nsf
 ```
 
 Restore by copying the files back into `/local/notesdata/dommcp/` (preserve `notes:notes` ownership and
-`640` on the license file), then `load dommcp_addin`.
+`640` on the license file), then bring the server back up. If `dommcp_addin` is listed in `ServerTasks=`
+that means restarting Domino — `load dommcp_addin` alone is only right when it is *not* listed (same
+reasoning as the note above).
+
+> **Take a second, logical backup as well.** A file copy is only as good as the file. Settings, tokens (as
+> hashes), grants and the license document can all be read out over the MCP endpoint and stored as JSON: it
+> is tiny, it stays readable, and it does not depend on the NSF being intact.
 
 > Treat the config NSF and license file as **secrets** — they contain token hashes and your signed license.
 > Do not commit them to version control or share them publicly.

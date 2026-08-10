@@ -22,6 +22,8 @@ the server — see below). Unmarked tools in a category inherit that category's 
 - `probe_log_view` — structure probe for log views.
 - `read_view_entries` — read rows from a view (paged).
 - `list_fields_for_view` — fields/columns backing a view.
+- `get_guidance` 🔍 — task-oriented guidance (DXL shapes, access paths, pitfalls) straight from the server,
+  so an AI client does not have to guess the conventions.
 
 ## Read — documents
 
@@ -33,6 +35,10 @@ the server — see below). Unmarked tools in a category inherit that category's 
 - `fetch_snapshot_chunk` — page through a large, size-capped result.
 - `dommcp_render_view` / `dommcp_render_form` 🔍 — render a view or form the way the Notes client shows it
   (HTML), for a quick look without a client.
+- `dommcp_export_view` 🔍 — export a view as CSV/JSON for reporting or a hand-over.
+- `dommcp_import_csv` ✏️ — bulk-import documents from CSV, with a preview pass before anything is written.
+- `dommcp_list_calendar_entries` 🔍 — read calendar entries. Repeating meetings are reported as
+  `recurrence: "not_expanded"` rather than silently returning only the first occurrence.
 
 ## DQL & aggregation
 
@@ -53,6 +59,11 @@ the server — see below). Unmarked tools in a category inherit that category's 
 - `create_document_attachment` ✏️ — attach a file to a document (`$FILE`, from base64 or text).
 - `dommcp_write_richtext` ✏️ — write a real rich-text field (CD records): styled runs, colours, fonts.
 - `dommcp_folder` ✏️ — create a folder or file/move/remove documents in it, addressed by UNID.
+- `dommcp_upsert_design_elements` ✏️ — apply several design changes in one call, in dependency order.
+
+> **`status` means RESULT, not intent.** A write is `ok` only after the server read the document back and
+> the stored values matched. `partial` means written but not verifiable, `error` means a proven loss — and
+> then the response *names the fields*. Never treat `ok` as the only thing worth checking.
 
 ## Design authoring
 
@@ -77,6 +88,62 @@ the server — see below). Unmarked tools in a category inherit that category's 
 - `dommcp_scaffold_app` ✏️ — generate a complete client application (forms, views, sidebar navigation,
   frameset) from a compact content model.
 - `dommcp_validate_formula` 🔍 — compile-check a Domino formula before writing it into a design element.
+- `dommcp_eval_lotusscript` ✏️ — run a LotusScript snippet and get its `Print` output back, without
+  hand-building a throwaway agent. The server creates one, runs it and removes it again — also when the run
+  fails. A runtime error is reported as such, with the line number in *your* snippet.
+- `dommcp_recompile_lotusscript` ✏️ — recompile the agents that bind a given script library. Use it after
+  changing what a library **exports**: a change to the *body* of an existing function reaches consumers
+  immediately, a change to its *interface* only after a recompile. It also names the consumers that no
+  longer compile — the failure you would otherwise meet at runtime.
+- `dommcp_search_design` 🔍 — full-text search across the design source (LotusScript, formulas, JavaScript)
+  with element, line and matching text. A broken pattern is reported as an error, never as "0 hits".
+- `dommcp_copy_design` ✏️ — copy **named** design elements from one database into another, in dependency
+  order, without a master-template binding. Identical elements are left alone, so a second run is harmless.
+- `dommcp_design_dependencies` 🔍 — dependency graph and impact analysis (`dependencies_of` | `used_by` |
+  `impact_analysis`), each edge with its source location and a confidence level. "0 references" means
+  *nothing was found*, never "safe to delete" — the response says so.
+- `dommcp_list_design_capabilities` 🔍 — what this build can write per design type, measured, not promised.
+
+## Design safety net — snapshots, change sets, promotion
+
+- `dommcp_list_design_snapshots` / `dommcp_get_design_snapshot` 🔍 — before **every** design write the server
+  stores the previous state; these read the history and verify a snapshot's integrity.
+- `dommcp_restore_design_snapshot` ✏️ — roll a design element back. The restore is itself reversible and
+  returns an `undo_snapshot_id`.
+- `dommcp_create_change_set` ✏️ — plan several related design changes as ONE unit (writes nothing yet).
+- `dommcp_get_change_set` 🔍 — diff and conflict view for a planned change set.
+- `dommcp_approve_change_set` ✏️ — four-eyes approval: the grant that planned it may not approve it.
+- `dommcp_apply_change_set` ✏️ — apply it. All baselines are checked before the first write; a failure
+  mid-way rolls back what was already applied and the state is never reported as `applied`.
+- `dommcp_export_package` 🔍 / `dommcp_inspect_package` 🔍 / `dommcp_apply_package` ✏️ — reproducible
+  promotion: build a package once, dry-run it against the target, then apply the **same** package to test
+  and production instead of having a model generate it twice.
+
+## Assessment, testing & automation
+
+- `dommcp_assess_database` 🔍 — inventory plus prioritised findings with checkable evidence (element, line,
+  matching text). **Read-only**, so it can run before anyone grants write access.
+- `dommcp_run_tests` ✏️ — run a declarative test suite; the same cases run **once per grant**, because rows
+  an administrator sees say nothing about what a caseworker sees. A failure carries evidence, not just
+  `false`.
+- `dommcp_list_app_templates` 🔍 / `dommcp_create_app_from_template` ✏️ — a small gallery of reviewed
+  starting points, so "build me a helpdesk" yields the same application twice.
+- `dommcp_policy_explain` 🔍 — dry-run your own guardrail policy: which rule would decide, for which grant,
+  at which time — without executing anything.
+- `dommcp_start_task` / `dommcp_get_task` / `dommcp_cancel_task` — run a long call as a background task so
+  it survives a proxy timeout. Only calls that can genuinely take minutes are accepted.
+- `dommcp_server_task` ✏️ — control a Domino server task.
+- `dommcp_federated_query` 🔍 — ask several DomMCP servers at once (`find_database` | `replica_status` |
+  `server_health`). The answer names its participants and flags itself incomplete when one stays silent —
+  a missing row is never proof that something does not exist.
+- `dommcp_send_mail` ✏️ — send mail through the server. Off by default, bounded by an explicit policy, with
+  a preview mode — it is the one action DomMCP cannot take back.
+
+## Audit trail
+
+- `dommcp_query_audit` 🔍 — query the audit trail (who did what, with which tool, against which database).
+- `dommcp_export_audit` 🔍 — export it for reporting or an auditor.
+- `dommcp_verify_audit_chain` 🔍 — verify the trail's integrity chain.
 
 ## Database lifecycle ✏️
 
@@ -85,6 +152,9 @@ the server — see below). Unmarked tools in a category inherit that category's 
 - `delete_database` — delete a database.
 - `db_compact` — compact a database.
 - `db_get_quota` 🔍 — read quota/size limits.
+- `db_updall` ✏️ — rebuild/refresh view indexes.
+- `dommcp_set_database_title` ✏️ — rename an existing database. Only the title is touched; the stored value
+  is read back and compared.
 
 ## ACL & security
 
@@ -110,6 +180,9 @@ the server — see below). Unmarked tools in a category inherit that category's 
 - `list_replica_status` 🔍 — replication status.
 - `list_server_groups` 🔍 — server/directory groups.
 - `list_server_databases` 🔍 — databases on the server.
+- `dommcp_list_grants` 🔍 / `dommcp_list_tokens` 🔍 — the configured grants and tokens (hashes only, never
+  a secret).
+- `notesini_set` ✏️ — set a `notes.ini` variable from an allow-listed set.
 
 ---
 
