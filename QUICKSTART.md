@@ -25,7 +25,7 @@ add-on, a newer host OS, or ask us for a Domino-12.0.2-specific build (that runt
 
 ```bash
 # Use the build that matches your glibc — check with: ldd --version | head -n 1
-cp dommcp_addin-linux-x64-glibc2.38 /opt/hcl/domino/notes/latest/linux/dommcp_addin
+cp dommcp_addin /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin
 chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin
 # Verify integrity first:
@@ -36,7 +36,7 @@ shasum -a 256 -c SHA256SUMS
 
 ```powershell
 # Copy the EXE into the Domino program directory (where nserver.exe lives), e.g.:
-Copy-Item dommcp_addin-windows-x64.exe "C:\Program Files\HCL\Domino\dommcp_addin.exe"
+Copy-Item dommcp_addin.exe "C:\Program Files\HCL\Domino\dommcp_addin.exe"
 # Verify integrity (compare against the entry in SHA256SUMS):
 Get-FileHash "C:\Program Files\HCL\Domino\dommcp_addin.exe" -Algorithm SHA256
 ```
@@ -61,7 +61,7 @@ the plain `cp` above runs on the host and does **not** reach into the container.
 
 ```bash
 # Binary → program dir (NOTE: /opt is NOT persistent — survives restarts, not an image rebuild):
-docker cp dommcp_addin-linux-x64-glibc2.38  <c>:/opt/hcl/domino/notes/latest/linux/dommcp_addin
+docker cp dommcp_addin  <c>:/opt/hcl/domino/notes/latest/linux/dommcp_addin
 docker exec -u 0 <c> sh -lc 'chown notes:notes /opt/hcl/domino/notes/latest/linux/dommcp_addin && chmod 755 /opt/hcl/domino/notes/latest/linux/dommcp_addin'
 
 # Whole dommcp/ folder (config + audit templates) → persistent data dir:

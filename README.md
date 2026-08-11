@@ -127,8 +127,8 @@ promised.
 
 | Artifact | Asset |
 |---|---|
-| **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin-linux-x64-glibc2.38` |
-| **Windows x64 add-in** | `dommcp_addin-windows-x64.exe` |
+| **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin` |
+| **Windows x64 add-in** | `dommcp_addin.exe` |
 | **HCL domino-container Custom Add-on** | `dommcp-0.0.809.taz` (`-custom-addon=<file>.taz#<sha256>`) |
 | **DB master templates** (config + audit, token-less) | `dommcpcfg.ntf`, `dommcpaudit.ntf` |
 | **Handbook** (German / English, PDF) | `DomMCP-Installationsanleitung.pdf`, `DomMCP-Installation-Guide.pdf` |
