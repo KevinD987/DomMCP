@@ -119,9 +119,9 @@ verified on all three. Linux x86_64, Windows x64, or the HCL domino-container.
 in version folders in this repository; those folders are gone — every artifact, including the older versions,
 is now a release asset. That keeps a clone small and gives each download a stable URL and a checksum.
 
-### Current release — [v0.0.671](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.671)
+### Current release — [v0.0.806](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.806)
 
-Linux and Windows come from the **same commit** (`e304c36`) in this release. Each binary ships with its own
+Linux and Windows come from the **same commit** (`1291f40`) in this release. Each binary ships with its own
 `manifest-*.json` naming that commit and the artifact's SHA-256, so the claim is checkable rather than
 promised.
 
@@ -129,7 +129,7 @@ promised.
 |---|---|
 | **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin-linux-x64-glibc2.38` |
 | **Windows x64 add-in** | `dommcp_addin-windows-x64.exe` |
-| **HCL domino-container Custom Add-on** | `dommcp-0.0.671.taz` (`-custom-addon=<file>.taz#<sha256>`) |
+| **HCL domino-container Custom Add-on** | `dommcp-0.0.806.taz` (`-custom-addon=<file>.taz#<sha256>`) |
 | **DB master templates** (config + audit, token-less) | `dommcpcfg.ntf`, `dommcpaudit.ntf` |
 | **Handbook** (German / English, PDF) | `DomMCP-Installationsanleitung.pdf`, `DomMCP-Installation-Guide.pdf` |
 | Build provenance | `manifest-linux.json`, `manifest-windows.json`, `addon-manifest.json` |
@@ -142,7 +142,7 @@ Always verify after download: `shasum -a 256 -c SHA256SUMS`.
 The add-in links against the libnotes of the target Domino, and that sets a **minimum glibc**. Detect yours
 with `ldd --version | head -n 1`, then:
 
-| Distribution | glibc | v0.0.671 (≥ 2.38) | v0.0.272 (≥ 2.34) |
+| Distribution | glibc | v0.0.806 (≥ 2.38) | v0.0.272 (≥ 2.34) |
 |---|---|---|---|
 | Ubuntu 24.04 LTS, Debian 13, RHEL/Rocky/Alma 10 | 2.38–2.41 | ✅ | ✅ |
 | Ubuntu 22.04 LTS | 2.35 | ❌ | ✅ |
@@ -171,11 +171,52 @@ The container add-on sidesteps the issue entirely: the `.taz` runs inside the HC
 
 ### Older releases
 
+[v0.0.671](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.671),
 [v0.0.650](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.650),
 [v0.0.615](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.615) (Linux only),
 [v0.0.272](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.272) and
 [v0.0.249](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.249) remain available. Use v0.0.272 only if
 your glibc rules out the current build — it is many months behind.
+
+**New in v0.0.806** — the largest release so far, and most of it is about the server telling you what it
+actually did.
+
+*Design work that no longer fails quietly.* A LotusScript snippet can be run directly with
+`dommcp_eval_lotusscript`, and a crash is now reported as `runtime_error` with the error and line instead of
+`ok` with truncated output. `dommcp_import_dxl` compiles LotusScript but does not sign it — an unsigned
+script library makes every agent that binds it abort silently, so unsigned code-bearing notes are now named
+in the response. A library imported without `Option Public` exports nothing, and an agent using it receives
+an empty value with no error anywhere; that is now flagged too, and `dommcp_run_agent` explains an
+empty-output run by checking exactly these two causes. `dommcp_copy_design` and `dommcp_apply_package`
+predict what a run cannot do **before** writing anything, and what the DXL path cannot carry (Java agents,
+oversized script modules) is copied note by note instead. New alongside them:
+`dommcp_recompile_lotusscript`, `dommcp_search_design`, `dommcp_set_database_title`.
+
+*Changes you can review and undo.* Every design write takes a snapshot first
+(`dommcp_list_design_snapshots` / `dommcp_get_design_snapshot` / `dommcp_restore_design_snapshot`, and the
+restore is itself reversible). Related edits can be planned, diffed, approved by a second grant and applied
+as one unit with rollback (`dommcp_create_change_set` …). `dommcp_design_dependencies` answers what uses
+what before you delete it — and says plainly that "no references found" is not the same as "safe to delete".
+`dommcp_export_package` / `inspect` / `apply` promote the *same* package to test and production instead of
+having a model rebuild it twice.
+
+*Knowing your estate.* `dommcp_assess_database` is read-only and in the READ tier, so it can run before you
+grant write access; it reports findings with checkable evidence and no invented overall score. A browser
+status page at `GET /status` needs no MCP client. `dommcp_run_tests` runs a declarative suite **once per
+grant**, because a view returning rows for an administrator says nothing about a clerk.
+
+*New capabilities.* Mail and calendar (`dommcp_send_mail` is off by default, enterprise only, and reports
+`handed_to_router` rather than claiming delivery), CSV import and view export, application templates for
+reproducible scaffolding, multi-server queries that state which peers answered, attachment text extraction
+that distinguishes "no text layer" from "empty", a tamper-evident audit chain with SIEM export,
+customer-written guardrails, and long calls as background tasks so they survive a proxy timeout.
+
+*Smaller, but you will notice.* The delivery seed now ships `read` and `developer` role templates next to
+`super-admin` — picking the smallest one cuts the tool list sent at every session start to roughly a third.
+`search_documents` returns the same page twice in a row (it did not before). A config reload that would
+return zero tokens is refused instead of revoking every credential at once. And a configuration database
+that exists but cannot be opened is never overwritten: the server says so and stops, because replacing the
+wrong file is quiet, not loud.
 
 **New in v0.0.671:** a grant's database list is now bound to `allow_all_databases` instead of being inferred
 from `allowed_tools: "*"` — a token scoped to one database could otherwise see the server's whole inventory.
