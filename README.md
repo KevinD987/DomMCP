@@ -119,9 +119,9 @@ verified on all three. Linux x86_64, Windows x64, or the HCL domino-container.
 in version folders in this repository; those folders are gone — every artifact, including the older versions,
 is now a release asset. That keeps a clone small and gives each download a stable URL and a checksum.
 
-### Current release — [v0.0.806](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.806)
+### Current release — [v0.0.809](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.809)
 
-Linux and Windows come from the **same commit** (`1291f40`) in this release. Each binary ships with its own
+Linux and Windows come from the **same commit** (`5464209`) in this release. Each binary ships with its own
 `manifest-*.json` naming that commit and the artifact's SHA-256, so the claim is checkable rather than
 promised.
 
@@ -129,7 +129,7 @@ promised.
 |---|---|
 | **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin-linux-x64-glibc2.38` |
 | **Windows x64 add-in** | `dommcp_addin-windows-x64.exe` |
-| **HCL domino-container Custom Add-on** | `dommcp-0.0.806.taz` (`-custom-addon=<file>.taz#<sha256>`) |
+| **HCL domino-container Custom Add-on** | `dommcp-0.0.809.taz` (`-custom-addon=<file>.taz#<sha256>`) |
 | **DB master templates** (config + audit, token-less) | `dommcpcfg.ntf`, `dommcpaudit.ntf` |
 | **Handbook** (German / English, PDF) | `DomMCP-Installationsanleitung.pdf`, `DomMCP-Installation-Guide.pdf` |
 | Build provenance | `manifest-linux.json`, `manifest-windows.json`, `addon-manifest.json` |
@@ -142,7 +142,7 @@ Always verify after download: `shasum -a 256 -c SHA256SUMS`.
 The add-in links against the libnotes of the target Domino, and that sets a **minimum glibc**. Detect yours
 with `ldd --version | head -n 1`, then:
 
-| Distribution | glibc | v0.0.806 (≥ 2.38) | v0.0.272 (≥ 2.34) |
+| Distribution | glibc | v0.0.809 (≥ 2.38) | v0.0.272 (≥ 2.34) |
 |---|---|---|---|
 | Ubuntu 24.04 LTS, Debian 13, RHEL/Rocky/Alma 10 | 2.38–2.41 | ✅ | ✅ |
 | Ubuntu 22.04 LTS | 2.35 | ❌ | ✅ |
@@ -178,7 +178,7 @@ The container add-on sidesteps the issue entirely: the `.taz` runs inside the HC
 [v0.0.249](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.249) remain available. Use v0.0.272 only if
 your glibc rules out the current build — it is many months behind.
 
-**New in v0.0.806** — the largest release so far, and most of it is about the server telling you what it
+**New in v0.0.809** — the largest release so far, and most of it is about the server telling you what it
 actually did.
 
 *Design work that no longer fails quietly.* A LotusScript snippet can be run directly with
@@ -217,6 +217,10 @@ customer-written guardrails, and long calls as background tasks so they survive 
 return zero tokens is refused instead of revoking every credential at once. And a configuration database
 that exists but cannot be opened is never overwritten: the server says so and stops, because replacing the
 wrong file is quiet, not loud.
+
+The Windows binary is current again in this release: a `gmtime_r` call — POSIX-only, and absent from MSVC —
+had been breaking the Windows build, so the platform guard now lives in one shared helper instead of being
+repeated at every call site.
 
 **New in v0.0.671:** a grant's database list is now bound to `allow_all_databases` instead of being inferred
 from `allowed_tools: "*"` — a token scoped to one database could otherwise see the server's whole inventory.
