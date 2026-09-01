@@ -51,6 +51,26 @@ the server — see below). Unmarked tools in a category inherit that category's 
 - `count_log_events` — count log events.
 - `aggregate_log_messages` — group/aggregate log messages.
 
+## Retrieval / RAG — **ENTERPRISE only**
+
+- `dommcp_rag_sync` 🔍 — hand documents to an index page by page, in a shape you can embed: stable identity
+  (database + UNID), form, timestamps, a `content_hash`, the fields you selected, and a flat `text` that
+  keeps the field name in front of each value — "active" on its own is not interpretable. Pages are capped
+  in **bytes**, not only in document count, and every answer carries the call that fetches the next one. A
+  delta run reports **deletions** (via Domino's deletion stubs, the only way to learn that a document is
+  gone) and states plainly when that list cannot be complete, because Domino purges stubs after the
+  replication cut-off. Attachments come along as metadata — name, size, type where it can be determined —
+  never as bytes.
+- `dommcp_rag_check_access` 🔍 — re-check, at answer time, whether *this* user may actually see a document
+  the index returned. An index is a copy, and a copy does not age with your ACL.
+
+> Embeddings, chunking, vector storage and reranking are deliberately **not** part of this. The server hands
+> out documents; which model indexes them is your choice.
+>
+> Both tools sit in the **ENTERPRISE** package even though they are read-only. The package boundary follows
+> blast radius, not difficulty: `dommcp_rag_sync` is the most convenient way there is to carry a complete
+> customer database out of the building, page by page.
+
 ## Write — documents ✏️
 
 - `create_document` — create a document (`form` + typed `fields` array).

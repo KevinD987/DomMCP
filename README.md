@@ -119,30 +119,35 @@ verified on all three. Linux x86_64, Windows x64, or the HCL domino-container.
 in version folders in this repository; those folders are gone — every artifact, including the older versions,
 is now a release asset. That keeps a clone small and gives each download a stable URL and a checksum.
 
-### Current release — [v0.0.809](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.809)
+### Current release — [v0.0.1236](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.1236)
 
-Linux and Windows come from the **same commit** (`5464209`) in this release. Each binary ships with its own
+Linux and Windows come from the **same commit** (`f79b943`) in this release. Each binary ships with its own
 `manifest-*.json` naming that commit and the artifact's SHA-256, so the claim is checkable rather than
 promised.
 
 | Artifact | Asset |
 |---|---|
 | **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin` |
-| **Windows x64 add-in** | `dommcp_addin.exe` |
-| **HCL domino-container Custom Add-on** | `dommcp-0.0.809.taz` (`-custom-addon=<file>.taz#<sha256>`) |
+| **Windows x64 add-in** | `dommcp_addin-windows-x64.exe` |
+| **HCL domino-container Custom Add-on** | `dommcp-0.0.1236.taz` (`-custom-addon=<file>.taz#<sha256>`) |
 | **DB master templates** (config + audit, token-less) | `dommcpcfg.ntf`, `dommcpaudit.ntf` |
 | **Handbook** (German / English, PDF) | `DomMCP-Installationsanleitung.pdf`, `DomMCP-Installation-Guide.pdf` |
 | Build provenance | `manifest-linux.json`, `manifest-windows.json`, `addon-manifest.json` |
-| Integrity checksums | `SHA256SUMS` |
+| Integrity checksums | `SHA256SUMS`, `SHA256SUMS-windows.txt` |
 
 Always verify after download: `shasum -a 256 -c SHA256SUMS`.
+
+> **Windows is current again.** It had not been since v0.0.809: a POSIX-only header had been breaking the
+> MSVC build for three weeks, followed by two more of the same family once that was cleared. The Windows
+> build now runs on every change rather than only when a release is cut, so the next such break surfaces
+> with the change that causes it instead of three weeks later.
 
 ### ⚠️ Check your glibc first (Linux)
 
 The add-in links against the libnotes of the target Domino, and that sets a **minimum glibc**. Detect yours
 with `ldd --version | head -n 1`, then:
 
-| Distribution | glibc | v0.0.809 (≥ 2.38) | v0.0.272 (≥ 2.34) |
+| Distribution | glibc | v0.0.1236 (≥ 2.38) | v0.0.272 (≥ 2.34) |
 |---|---|---|---|
 | Ubuntu 24.04 LTS, Debian 13, RHEL/Rocky/Alma 10 | 2.38–2.41 | ✅ | ✅ |
 | Ubuntu 22.04 LTS | 2.35 | ❌ | ✅ |
@@ -171,12 +176,80 @@ The container add-on sidesteps the issue entirely: the `.taz` runs inside the HC
 
 ### Older releases
 
+[v0.0.809](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.809),
 [v0.0.671](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.671),
 [v0.0.650](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.650),
 [v0.0.615](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.615) (Linux only),
 [v0.0.272](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.272) and
 [v0.0.249](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.249) remain available. Use v0.0.272 only if
 your glibc rules out the current build — it is many months behind.
+
+**New in v0.0.1236** — three months of work, and most of it is about answers you can trust: what the
+server hands back, and what it now refuses to do.
+
+*Rich text is readable.* Until this release, a rich text item was skipped on **every** read path — a
+document with a contract clause came back looking exactly like one without it, and nothing said so. The
+reader existed; it was simply never wired up. Line breaks were lost in both directions as well, on writing
+and on reading, by two separate defects that hid each other. Expect responses to carry content that was
+always there: if you want narrow answers, project the fields you need.
+
+*The server stays up.* A handful of DXL payloads could take down the whole Domino server process — not the
+add-in, the server — and one of them hung a worker thread forever with no crash, no log and no recovery.
+They are bugs in HCL's DXL importer, reachable by anyone with design write access; the fix is ours: the
+payloads are refused **before** the import, each with a message naming what is wrong and which route does
+work. A second family sat in our own code, where an oversized paragraph, a long query term or a long log
+line overflowed a recursive regex — and that one needed only a **read-only** token. All of them are now
+linear scanners rather than size limits, so nothing valid was made invalid to buy the fix.
+
+*Writes no longer truncate quietly.* Several places in the native writer described a record length in a
+16-bit field and cut the payload once it grew past that: a form body, an action bar, a compiled selection
+formula. A truncated formula can still be valid and simply select different documents — a view that looks
+complete and is not. Oversized input is now rejected with the limit and the way around it, instead of being
+silently shortened and reported as success. The same rule reached the tools: a script library too large for
+its storage is refused *before* the write, with the real reason, rather than leaving an empty note behind
+and advising you to try again.
+
+*An answer no longer claims more than was checked.* The audit chain reported `chain_intact: true` over zero
+verified events, and an audit database that could not be opened looked like a clean one. An unreadable ACL
+was reported as an empty ACL — on a rights question, the most expensive kind of wrong answer. "Cannot be
+opened" was reported as "has no design" and as "not found". A dry run reported a compile result it never
+computed, and one reported a rejection that never happened. Each of these now says which of the two it is,
+or omits the verdict entirely — because "not checked" is not "checked and fine".
+
+*Tool schemas a model can actually follow.* Measured against a local model rather than assumed: an argument
+offered but not required gets left out, the call fails, and the model repeats it verbatim until it gives
+up. Advice in the error text does not steer a weak model; the schema does. So the canonical argument is now
+required (aliases still work, they are just no longer advertised), arrays of objects declare their keys, and
+a closed vocabulary is an `enum` instead of a sentence — each list counted against the implementation, which
+turned up several documented values that no code ever accepted. On the measured task set this moved whole
+categories from "never succeeds" to "succeeds in two calls".
+
+*Retrieval.* `dommcp_rag_sync` hands documents to an index page by page with stable identity, a content
+hash, byte-capped pages, deletion reporting via Domino's deletion stubs, and attachment metadata — and it
+says when a deletion list cannot be complete instead of implying it is. `dommcp_rag_check_access` re-checks
+at answer time whether the user may see what the index returned, because an index is a copy and a copy does
+not age with your ACL. Embeddings, chunking and vector storage are deliberately out of scope. Both are
+ENTERPRISE-only: read-only, but the most convenient way there is to carry a database out of the building.
+
+*Java, and things that quietly did nothing.* A crashed Java agent reported `ok` with an empty result while
+its stack trace went to the server log; the exception now comes back with the call. A Java library is its
+own design type — writing LotusScript over one used to destroy two megabytes of third-party code and report
+full success. Libraries can be **referenced** instead of embedded (the same agent went from 2.9 MB to 1.6 kB
+per call), and a file already on the server can be named by path instead of being sent as base64. Elsewhere:
+a permission switch that was read, stored and shipped in every configuration but never enforced now is
+(with a migration that distinguishes an inherited default from an actual decision), a timeout the server
+reported but never applied was removed rather than left as decoration, and guardrail obligations that only
+set a flag are now enforced.
+
+*Smaller, but you will notice.* Copying a design used to drop the entire application shell — framesets,
+outlines, pages — and report success; promoting an app from test to production lost its navigation. Every
+scaffolded application shipped an empty placeholder view that was the only one visible in the Notes menu.
+`dommcp_export_database_dxl` now distinguishes "too large for this profile" from "unreadable" instead of
+offering both and letting you guess. Steering fields such as `has_more` and `status` are serialized
+**before** the payload, so a client that truncates long answers still sees them — they used to sit behind
+30 KB of documents. And a text field named `Readers` protects nothing in Domino unless the item carries the
+reader flag; writing one without it is now called out, since a protection that silently does nothing is the
+one nobody discovers.
 
 **New in v0.0.809** — the largest release so far, and most of it is about the server telling you what it
 actually did.
