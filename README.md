@@ -253,7 +253,6 @@ UTF-8 numeric-entity decode fix.
 | [`TOOLS.md`](TOOLS.md) | The MCP tool catalog by category (read / write / design / admin / DQL). |
 | Handbook PDFs (release assets) | **Administrator handbook**, German and English: install (Linux, container, Windows), first administrator, licence, functional test, configuration database, AI client, operation, backup, troubleshooting, acceptance checklist. |
 | `dommcpcfg.ntf` / `dommcpaudit.ntf` (release assets) | **Recommended fresh-install DB master templates** — token-less, no secrets: config (Token/Grant/License/Settings forms + views) and a browsable audit database. Put both into `<data dir>/dommcp/`; the add-in creates the databases from them on first load — see QUICKSTART step 1b. |
-| [`default-config.json`](default-config.json) | Alternative JSON **seed** (token-less, `super-admin` grant template, placeholders; builds a config NSF *without* design). |
 | [`CONFIG_EXAMPLE.json`](CONFIG_EXAMPLE.json) | Annotated config template (placeholders only). |
 | [`examples/`](examples/) | n8n workflow + connector notes. |
 

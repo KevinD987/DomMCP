@@ -18,7 +18,6 @@ On Windows, type the same `tell dommcp <verb>` at the live server console.
 | Config NSF (source of truth) | `/local/notesdata/dommcp/dommcpcfg.nsf` |
 | License file | `/local/notesdata/dommcp/dommcp-license.json` |
 | Audit NSF | `/local/notesdata/dommcp/dommcpaudit.nsf` |
-| Seed (first boot only) | `/local/notesdata/dommcp-default-config.json` |
 
 On Windows the data directory is your Domino `notesdata` folder; the relative layout (`dommcp\dommcpcfg.nsf`,
 `dommcp\dommcp-license.json`, `dommcp\dommcpaudit.nsf`) is the same.

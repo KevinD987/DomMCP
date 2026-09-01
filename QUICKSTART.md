@@ -116,25 +116,13 @@ Copy-Item -Recurse dommcp "C:\Program Files\HCL\Domino\Data\dommcp"
 > `dommcpcfg.nsf` is design-only (zero documents). On the first load the add-in reports
 > `grants_loaded=0` until you run `provision-admin` (step 3), which creates the admin grant + token in it.
 
-### Alternative: JSON seed (no bundled NSF design)
-
-Instead of the NSF you may drop the [`default-config.json`](default-config.json) JSON seed into the data
-directory as `dommcp-default-config.json`. The add-in then builds the config NSF from it on first load
-(`grants_loaded=1` with the `super-admin` grant template), but that NSF has **no design** (it looks empty in
-the Notes client). Prefer the prebuilt NSF above unless you have a reason not to.
-
-```bash
-cp default-config.json /local/notesdata/dommcp-default-config.json   # Linux
-```
-
 ---
 
 ## 2) First start (NSF = source of truth)
 
 Start the add-in with **no path argument** so it auto-discovers its config NSF (the `dommcpcfg.nsf` you placed
 in step 1b, or the `dommcp/dommcpcfg.nsf` subfolder). Confirm with `tell dommcp status`: the prebuilt NSF
-reports `grants_loaded=0` (design-only — you mint the admin next, step 3); the JSON-seed path reports
-`grants_loaded=1`.
+reports `grants_loaded=0` — design-only; you mint the admin next, in step 3.
 
 ```text
 # On the Domino console (Linux: domino cmd "<verb>" / Windows: at the live console):
