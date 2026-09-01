@@ -149,6 +149,12 @@ curl -sS http://<host>:8088/healthz
 
 A fresh install is **token-less** on purpose. Bootstrap the first admin from the privileged server console:
 
+> **Not `provision_person_token`.** That tool has the more inviting name, and it is the one people find
+> first in the catalog — but it is an MCP tool and needs an admin grant to call, so it cannot create the
+> first one. It is the *second* stage: use it once an admin exists, to mint narrower tokens
+> ([step 3c](#3c-give-the-ai-access-to-one-database-only)). The console is privileged by definition, which
+> is why the bootstrap lives there.
+
 ```text
 tell dommcp provision-admin <secret>        # <secret> must be >= 8 chars
 ```
@@ -189,6 +195,46 @@ curl -sS -X POST http://<host>:8088/mcp \
 
 > Only needed once per copied template. Documents DomMCP creates/updates afterwards are auto-signed, so the
 > warning does not recur.
+
+---
+
+## 3c) Give the AI access to one database only
+
+The admin token from step 3 reaches **everything**. Do not point an AI client at it. Mint a second token
+that can reach one database and nothing else, and use that one:
+
+```bash
+curl -sS -X POST http://<host>:8088/mcp \
+  -H 'Content-Type: application/json' -H 'Authorization: Bearer <secret>' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"provision_person_token",
+    "arguments":{"display_name":"AI - Sales","database_path":"sales.nsf",
+      "idempotency_key":"mint-ai-sales-1"}}}'
+```
+
+`idempotency_key` is the only mandatory argument. The response carries:
+
+- **`secret`** — the new Bearer token. ⚠️ **Returned once and never again**; only its SHA-256 is stored.
+- `write_intent_secret`, `token_id`, `grant_id`
+
+Leave `allowed_tools` out and the new token gets a deliberately narrow read set — `list_allowed_databases`,
+`get_database_info`, `list_views`, `read_view_entries`, `search_documents`, `get_document`,
+`get_document_schema`, `query_documents_dql`. It is then read-only **by construction**, not by convention.
+Pass `document_write_allowed: "1"` / `design_write_allowed: "1"` (and the tools you want) if it should write.
+
+**Verify with the NEW token**, not the admin one:
+
+```bash
+curl -sS -X POST http://<host>:8088/mcp \
+  -H 'Content-Type: application/json' -H 'Authorization: Bearer <new-secret>' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_allowed_databases","arguments":{}}}'
+```
+
+It must return exactly one entry. ⚠️ The restriction lives in the **token**, not in a server setting — your
+admin token still sees every database, and that is not a sign the scoping failed. If the new token also
+returns everything, it was minted without `database_path`.
+
+To have the token see exactly what a **person** sees — Domino ACL and Readers fields included, rather than
+what a grant says — add `"domino_user": "CN=Jane Doe/O=Acme"` and `"read_enforcement": "acl"`.
 
 ---
 
