@@ -34,11 +34,15 @@ shasum -a 256 -c SHA256SUMS
 
 ### Windows
 
+The release asset is named `dommcp_addin-windows-x64.exe`. **Domino loads the task by file name**, so it has
+to arrive as `dommcp_addin.exe` — the copy below renames it. Keep that in mind if you move it by hand: a
+correctly placed file under the download name is simply never loaded.
+
 ```powershell
-# Copy the EXE into the Domino program directory (where nserver.exe lives), e.g.:
-Copy-Item dommcp_addin.exe "C:\Program Files\HCL\Domino\dommcp_addin.exe"
-# Verify integrity (compare against the entry in SHA256SUMS):
-Get-FileHash "C:\Program Files\HCL\Domino\dommcp_addin.exe" -Algorithm SHA256
+# Verify integrity first (compare against the entry in SHA256SUMS-windows.txt):
+Get-FileHash dommcp_addin-windows-x64.exe -Algorithm SHA256
+# Copy into the Domino program directory (where nserver.exe lives), renaming as you go:
+Copy-Item dommcp_addin-windows-x64.exe "C:\Program Files\HCL\Domino\dommcp_addin.exe"
 ```
 
 ### HCL domino-container — option A: build-time Custom Add-on `.taz` (persistent, recommended)
