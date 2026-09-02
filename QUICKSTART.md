@@ -240,8 +240,9 @@ what a grant says — add `"domino_user": "CN=Jane Doe/O=Acme"` and `"read_enfor
 
 ## 4) Install a license
 
-DomMCP verifies an offline Ed25519 license with a public key compiled into the binary. Without one it runs a
-7-day read-only evaluation, then blocks. To activate:
+DomMCP verifies an offline Ed25519 license with a public key compiled into the binary. Without one it runs
+the free **Essentials** edition indefinitely — enough to inspect databases, views and fields, but not to read
+their content. To activate a paid edition:
 
 1. Obtain your signed license file (`dommcp-license.json`) — it contains `license_code` + `license_domain`
    issued for your domain.

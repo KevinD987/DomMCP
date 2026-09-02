@@ -208,10 +208,12 @@ the server — see below). Unmarked tools in a category inherit that category's 
 
 ### Edition gating (summary)
 
-- **READ** — read / DQL / aggregation tools.
+- **Essentials** — free forever: which databases exist, their views and fields, server state. Seven tools,
+  and none of them reads document or log content.
+- **Analyst** — read / DQL / aggregation / design-inspection tools.
 - **PRO** — adds the write ✏️ and design-authoring tools.
 - **ENTERPRISE** — full set incl. administration, higher limits.
-- **TRIAL** — time-boxed evaluation.
+- **Trial** — 14 days of the full PRO set.
 
 Beyond the edition, a token only ever sees the tools its **grant** allows (`allowed_tools`), scoped to the
 databases, views, and fields the grant permits.

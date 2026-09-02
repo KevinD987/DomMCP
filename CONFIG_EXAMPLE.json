@@ -32,7 +32,7 @@
     ]
   },
   "license": {
-    "_comment": "Leave empty to seed unlicensed (7-day read-only eval). Activate via dommcp-license.json on the server, not by editing this file. The verifying public key is compiled into the binary; any key here is ignored.",
+    "_comment": "Leave empty to seed unlicensed — the server then runs the free Essentials edition indefinitely. Activate a paid edition via dommcp-license.json on the server, not by editing this file. The verifying public key is compiled into the binary; any key here is ignored.",
     "license_code": "",
     "status": "unlicensed",
     "issued_to_domain": "<YOUR_DOMAIN>",

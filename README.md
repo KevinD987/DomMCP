@@ -97,16 +97,19 @@ binary**, so a license must be signed by the genuine key (a swapped public key c
 
 | Edition | Capability |
 |---|---|
-| **READ** | Read / query / aggregation tools. |
-| **PRO** | READ plus write + design authoring. |
+| **Essentials** | Free forever. Shows how an application is built — databases, views, fields, server state. Does not read content. |
+| **Analyst** | Read, query and analyse: documents, DQL, aggregations, log analysis, bulk export, effective access rights, design inspection. |
+| **PRO** | Analyst plus write and design authoring. |
 | **ENTERPRISE** | Full toolset incl. administration, higher limits. |
-| **TRIAL** | Time-boxed evaluation. |
+| **Trial** | 14 days of the full PRO feature set. |
 
 Runtime behavior without a valid license:
 
-- **Unlicensed:** a **7-day read-only evaluation** window, after which the server is **blocked** until a
-  license is installed.
-- **Expired license:** the server degrades to **permanent read-only**.
+- **Unlicensed or expired:** the server settles into **Essentials**, permanently. Seven read-only tools that
+  describe the shape of an application without reading its content. Nothing is deleted and nothing is locked.
+
+There is no hard block and no evaluation deadline. What separates the free tier from a paid one is the tool
+ceiling, not a timer: reading documents, DQL and aggregations all start at Analyst.
 
 License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
 

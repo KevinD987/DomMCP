@@ -138,8 +138,10 @@ reasoning as the note above).
 
 ## License renewal
 
-The license carries an expiry. On expiry the server degrades to **permanent read-only** until a new license
-is installed; an unlicensed server runs a 7-day read-only evaluation and then blocks.
+The license carries an expiry. On expiry the server falls back to the free **Essentials** edition — the
+structure of an application stays readable, its content, queries, writes and administration stop — until a new
+license is installed. An unlicensed server sits in the same edition from the start. Nothing is ever blocked
+outright and nothing is deleted.
 
 1. Check the current expiry: `curl -sS http://<host>:8088/healthz` → `license.expires_at_unix` /
    `valid_until`.
