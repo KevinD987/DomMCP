@@ -208,8 +208,7 @@ the server — see below). Unmarked tools in a category inherit that category's 
 
 ### Edition gating (summary)
 
-- **Essentials** — free forever: which databases exist, their views and fields, server state. Seven tools,
-  and none of them reads document or log content.
+- **Essentials** — free forever: which databases exist, their views and fields, server state.
 - **Analyst** — read / DQL / aggregation / design-inspection tools.
 - **PRO** — adds the write ✏️ and design-authoring tools.
 - **ENTERPRISE** — full set incl. administration, higher limits.

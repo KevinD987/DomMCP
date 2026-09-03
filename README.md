@@ -97,7 +97,7 @@ binary**, so a license must be signed by the genuine key (a swapped public key c
 
 | Edition | Capability |
 |---|---|
-| **Essentials** | Free forever. Shows how an application is built — databases, views, fields, server state. Does not read content. |
+| **Essentials** | Free forever. Explore a Domino estate: which databases exist, how they are built, their views and fields, and the state of the server. |
 | **Analyst** | Read, query and analyse: documents, DQL, aggregations, log analysis, bulk export, effective access rights, design inspection. |
 | **PRO** | Analyst plus write and design authoring. |
 | **ENTERPRISE** | Full toolset incl. administration, higher limits. |
@@ -105,11 +105,11 @@ binary**, so a license must be signed by the genuine key (a swapped public key c
 
 Runtime behavior without a valid license:
 
-- **Unlicensed or expired:** the server settles into **Essentials**, permanently. Seven read-only tools that
-  describe the shape of an application without reading its content. Nothing is deleted and nothing is locked.
+- **Unlicensed or expired:** the server settles into **Essentials**, permanently. Nothing is deleted and
+  nothing is locked.
 
 There is no hard block and no evaluation deadline. What separates the free tier from a paid one is the tool
-ceiling, not a timer: reading documents, DQL and aggregations all start at Analyst.
+ceiling, not a timer — documents, DQL and aggregations begin at Analyst.
 
 License installation is described in [`QUICKSTART.md`](QUICKSTART.md).
 

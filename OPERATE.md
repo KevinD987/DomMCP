@@ -138,9 +138,8 @@ reasoning as the note above).
 
 ## License renewal
 
-The license carries an expiry. On expiry the server falls back to the free **Essentials** edition — the
-structure of an application stays readable, its content, queries, writes and administration stop — until a new
-license is installed. An unlicensed server sits in the same edition from the start. Nothing is ever blocked
+The license carries an expiry. On expiry the server falls back to the free **Essentials** edition until a new
+license is installed; an unlicensed server sits in the same edition from the start. Nothing is ever blocked
 outright and nothing is deleted.
 
 1. Check the current expiry: `curl -sS http://<host>:8088/healthz` → `license.expires_at_unix` /
