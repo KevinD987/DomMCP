@@ -122,23 +122,40 @@ verified on all three. Linux x86_64, Windows x64, or the HCL domino-container.
 in version folders in this repository; those folders are gone — every artifact, including the older versions,
 is now a release asset. That keeps a clone small and gives each download a stable URL and a checksum.
 
-### Current release — [v0.0.1236](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.1236)
+### Current release — [v0.0.1278](https://github.com/KevinD987/DomMCP/releases/tag/v0.0.1278)
 
-Linux and Windows come from the **same commit** (`f79b943`) in this release. Each binary ships with its own
+Linux and Windows come from the **same commit** (`ea5d7cc`) in this release. Each binary ships with its own
 `manifest-*.json` naming that commit and the artifact's SHA-256, so the claim is checkable rather than
 promised.
 
 | Artifact | Asset |
 |---|---|
 | **Linux x86_64 add-in** (glibc ≥ 2.38) | `dommcp_addin` |
-| **Windows x64 add-in** | `dommcp_addin-windows-x64.exe` |
-| **HCL domino-container Custom Add-on** | `dommcp-0.0.1236.taz` (`-custom-addon=<file>.taz#<sha256>`) |
+| **Windows x64 add-in** | `dommcp_addin.exe` |
+| **HCL domino-container Custom Add-on** | `dommcp-0.0.1278.taz` (`-custom-addon=<file>.taz#<sha256>`) |
 | **DB master templates** (config + audit, token-less) | `dommcpcfg.ntf`, `dommcpaudit.ntf` |
 | **Handbook** (German / English, PDF) | `DomMCP-Installationsanleitung.pdf`, `DomMCP-Installation-Guide.pdf` |
 | Build provenance | `manifest-linux.json`, `manifest-windows.json`, `addon-manifest.json` |
 | Integrity checksums | `SHA256SUMS`, `SHA256SUMS-windows.txt` |
 
 Always verify after download: `shasum -a 256 -c SHA256SUMS`.
+
+**What changed.** This release is mostly about speaking the MCP specification exactly, because a client that
+disagrees with the server on a field name does not report a mismatch — it simply stops.
+
+- `server/discover` now uses the field names the specification prescribes, and **every** result in the
+  modern protocol era carries `resultType`. A client that reached the modern era previously got a formally
+  valid answer it could not accept, and went quiet after a single successful call.
+- All published protocol revisions are accepted (`2024-11-05` through `2026-11-25`), and `initialize`
+  answers with the version the client asked for instead of a fixed one.
+- The OAuth protected-resource metadata now advertises `scopes_supported`, which a client reads between the
+  token exchange and its first call.
+- **View access answers one question.** `list_views`, `profile_database` and `read_view_entries` used to
+  disagree: a view could be reported as readable and then be refused. They now share a single rule, the
+  right to read views is settable and visible through the admin tools, and a view outside your scope stays
+  hidden rather than appearing readable.
+- The request log records every call, including the ones the server refuses — a rejected request used to
+  leave no trace at all, which made "nothing arrived" and "we turned it away" look identical.
 
 > **Windows is current again.** It had not been since v0.0.809: a POSIX-only header had been breaking the
 > MSVC build for three weeks, followed by two more of the same family once that was cleared. The Windows
